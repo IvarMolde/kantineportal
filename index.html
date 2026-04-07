@@ -677,26 +677,115 @@ async function genererNivå(tema, nivå) {
 
 // ─── PROMPT ──────────────────────────────────────────────
 function byggPrompt(temaNavnArg, nivå) {
+
+  // ── DETALJERTE CEFR-BESKRIVELSER ────────────────────────
   const nivåInfo = {
-    A1: 'SVÆRT enkle setninger (3–5 ord). Alltid ordbank. Matching og avkrysning. Bildestøtte [BILDE: ...].',
-    A2: 'Korte setninger. Enkle tekster (5–8 setninger). Fill-in-the-blank, sant/usant, enkle spørsmål.',
-    B1: 'Middels tekster (8–12 setninger). Skriveoppgaver, åpne svar, argumentasjon.',
-    B2: 'Lengre tekster (12–15 setninger). Formelt/uformelt register. Analyse og diskusjon.'
-  };
-  const gramFokus = {
-    A1: 'presens, subjekt+verb+objekt, personlige pronomen, tall',
-    A2: 'V2-regelen, inversjon, preteritum, adjektivbøying, preposisjoner',
-    B1: 'perfektum, modalverb, leddsetninger (fordi/når/hvis), sammensatte ord',
-    B2: 'passiv, kondisjonalis, avansert setningsbygging, formelt vs. uformelt register'
+
+    A1: `NIVÅ A1 – Absolutt nybegynner. Eleven forstår og bruker svært enkle uttrykk.
+LESETEKSTER: Maks 3–4 korte setninger per tekst. Maks 5–7 ord per setning.
+Kun presens. Kun kjente, hverdagslige ord. Ingen bi-setninger. Ingen inversjon.
+Eksempel på A1-setning: "Mari vasker bordet. Det er rent nå."
+OPPGAVETYPER: Matching (koble ord til bilde/definisjon), avkrysning (riktig/galt),
+fyll inn ETT ord fra ordbank, nummerere bilder i riktig rekkefølge.
+ORDBANK: ALLTID inkludert ved fyll-inn-oppgaver. Maks 6 ord i ordbanken.
+BILDESTØTTE: Marker med [BILDE: beskrivelse] der et bilde hjelper forståelsen.
+GRAMMATIKK: Kun presens av være/ha + svake verb. Subjekt + verb + objekt.
+Personlige pronomen (jeg, du, han/hun, vi). Tall 1–20. Farger og størrelser.
+SKRIVING: Eleven kopierer eller fyller inn enkeltord – aldri fri skriving.`,
+
+    A2: `NIVÅ A2 – Grunnleggende. Eleven forstår enkle tekster om kjente emner.
+LESETEKSTER: 5–7 setninger per tekst. Maks 10–12 ord per setning.
+Kan bruke preteritum og noen enkle bindeord (og, men, eller, fordi).
+Tydelig struktur: én tanke per setning.
+Eksempel på A2-setning: "Kari jobber i kantinen. Hun lager mat til de ansatte hver dag."
+OPPGAVETYPER: Sant/Usant med teksthenvisning, fyll inn ord/form fra ordbank (valgfritt),
+enkle spørsmål med korte svar (1–2 setninger), koble setningshalvdeler,
+sett ord i riktig rekkefølge (V2-trening).
+GRAMMATIKK: V2-regelen (inversjon ved adverbial fremst). Presens og preteritum av
+vanlige verb. Enkel adjektivbøying (en stor tallerken / et stort glass).
+Vanlige preposisjoner (i, på, ved, til, fra). Spørreord (hva, hvem, hvor, når).
+SKRIVING: Skriv 2–4 egne setninger med støttestruktur (setningsstartere gitt).`,
+
+    B1: `NIVÅ B1 – Mellomnivå. Eleven forstår hovedpunktene i klare standardtekster.
+LESETEKSTER: 8–12 setninger per tekst. Kan inneholde bi-setninger og fagord.
+Teksten kan ha en problemstilling eller et synspunkt som eleven skal ta stilling til.
+Eksempel på B1-setning: "Hvis du oppdager at maten er utgått på dato, skal du straks
+ta den ut av kantinen og melde fra til lederen din."
+OPPGAVETYPER: Åpne spørsmål (svar i 2–4 setninger), finn hovedbudskapet,
+skriv en kort tekst (8–10 setninger), ordforklaringer med egne ord,
+jumbled sentences (sett om til korrekt V2-setning), diskusjonsoppgaver.
+GRAMMATIKK: Perfektum (har + partisipp). Modalverb (må, kan, skal, bør, vil).
+Leddsetninger med fordi, når, hvis, selv om, at. Sammensatte substantiv.
+Refleksive verb. Passiv med -s (maten varmes opp) eller bli (maten ble kastet).
+SKRIVING: Skriv sammenhengende tekst (8–10 setninger) om eget valgt emne fra temaet.`,
+
+    B2: `NIVÅ B2 – Videregående. Eleven forstår komplekse tekster og kan argumentere.
+LESETEKSTER: 12–16 setninger per tekst. Kan inneholde fagterminologi, ironi,
+underforståtte holdninger og sammensatte resonnementer. Teksten kan ha
+mot-argumenter eller nyanser som krever kritisk lesning.
+Eksempel på B2-setning: "Selv om mange ansatte opplever matsvinn som uunngåelig,
+viser forskning at systematisk planlegging kan redusere svinnet med opptil 40 prosent."
+OPPGAVETYPER: Argumenterende skriveoppgave (ta stilling til et standpunkt),
+analyser teksten (forfatterens intensjon, virkemidler, målgruppe),
+sammenlign to tekster, skriv en profesjonell e-post eller rapport,
+diskuter etiske dilemmaer fra kantineyrket.
+GRAMMATIKK: Passiv i alle tider. Kondisjonalis (ville ha + partisipp).
+Avansert setningsbygging med flere leddsetninger. Formelt vs. uformelt register –
+eleven skal vise at de behersker begge. Nominalisering (å vaske → vasking/vask).
+Konjunktivar og setningsforkortelser. Faglig presisjon i ordvalg.
+SKRIVING: Argumenterende tekst (12–15 setninger) med innledning, hoveddel og avslutning.`
   };
 
-  return `Du er en erfaren norsklærer ved Molde voksenopplæringssenter (MBO). Du lager ukesoppgaver for voksne innvandrere.
+  // ── GRAMMATIKKFOKUS PER NIVÅ ────────────────────────────
+  const gramFokus = {
+    A1: 'presens av være/ha og svake verb, subjekt+verb+objekt, personlige pronomen (jeg/du/han/hun/vi/dere/de), tall 1–20',
+    A2: 'V2-regelen og inversjon ved adverbial fremst, presens og preteritum av vanlige verb, enkel adjektivbøying (en/ei/et), de vanligste preposisjonene (i/på/til/fra/ved/med)',
+    B1: 'perfektum (har+partisipp), modalverb (må/kan/skal/bør/vil), leddsetninger med fordi/når/hvis/selv om/at, sammensatte substantiv, passiv med -s og bli-passiv',
+    B2: 'passiv i alle tider, kondisjonalis (ville ha+partisipp), avansert setningsbygging med flere leddsetninger, formelt vs. uformelt register, nominalisering, faglig presisjon'
+  };
+
+  // ── OPPGAVETYPETABELL ────────────────────────────────────
+  const oppgavetyper = {
+    A1: 'Matching, avkrysning (riktig/feil), fyll inn ETT ord fra ordbank, nummerer i rekkefølge, koble ord til bilde',
+    A2: 'Sant/Usant, fyll inn ord/form (med eller uten ordbank), koble setningshalvdeler, sett ord i riktig rekkefølge, enkle spørsmål med korte svar',
+    B1: 'Åpne spørsmål (2–4 setninger), finn hovedbudskapet, jumbled sentences, skriv kort tekst (8–10 setninger), ordforklaringer med egne ord',
+    B2: 'Argumenterende skriveoppgave, tekstanalyse, sammenlign to tekster, profesjonell e-post/rapport, diskuter etiske dilemmaer'
+  };
+
+  // ── TEKSTLENGDE ──────────────────────────────────────────
+  const tekstlengde = {
+    A1: '3–4 setninger, maks 5–7 ord per setning',
+    A2: '5–7 setninger, maks 10–12 ord per setning',
+    B1: '8–12 setninger, bi-setninger tillatt',
+    B2: '12–16 setninger, fagterminologi og sammensatte resonnementer'
+  };
+
+  return `Du er en erfaren norsklærer ved Molde voksenopplæringssenter (MBO). Du lager ukesoppgaver for voksne innvandrere i faget kantinemedarbeider.
+
+╔══════════════════════════════════════════════════╗
+  OPPDRAGET DITT
+╚══════════════════════════════════════════════════╝
 
 TEMA: ${temaNavnArg}
-CEFR-NIVÅ: ${nivå} — ${nivåInfo[nivå]}
-GRAMMATIKKFOKUS DENNE UKEN: ${gramFokus[nivå]}
+CEFR-NIVÅ: ${nivå}
 NORSKNORM: Bokmål
 YRKE: Kantinemedarbeider
+
+── DETALJERT NIVÅBESKRIVELSE ──────────────────────
+${nivåInfo[nivå]}
+
+── GRAMMATIKKFOKUS DENNE UKEN ─────────────────────
+${gramFokus[nivå]}
+
+── ANBEFALTE OPPGAVETYPER FOR DETTE NIVÅET ────────
+${oppgavetyper[nivå]}
+
+── TEKSTLENGDE PER LESETEKST ──────────────────────
+${tekstlengde[nivå]}
+
+VIKTIG: Du MÅ tilpasse ALT innhold til nivå ${nivå}.
+Ikke bruk oppgavetyper, setningslengder eller grammatikk fra andre nivåer.
+En A1-elev og en B2-elev skal ikke gjenkjenne hverandres oppgaver.
 
 Lag et KOMPLETT UKESARK med nøyaktig denne strukturen:
 
