@@ -294,10 +294,15 @@ header {
   color:#fff;
   border:none; border-radius:16px;
   cursor:pointer; font-family:'DM Sans',sans-serif;
-  text-decoration:none;
+  text-decoration:none; width:100%;
+  -webkit-appearance:none; appearance:none;
   transition:all .22s ease;
   animation: nedlastPuls 2.2s ease-in-out infinite;
   position:relative; overflow:hidden;
+}
+.dl-btn:disabled {
+  opacity:.4; cursor:not-allowed;
+  animation:none; box-shadow:none;
 }
 .dl-btn::before {
   content:'';
@@ -519,14 +524,14 @@ header {
                 <p id="resultDesc">Last ned Word-filen under.</p>
               </div>
             </div>
-            <a href="#" class="dl-btn" id="dlBtn" download>
+            <button class="dl-btn" id="dlBtn" onclick="utforNedlasting()" disabled>
               <div class="dl-icon-wrap">📥</div>
               <div class="dl-info">
                 <span class="dl-tittel">Last ned arbeidsark</span>
                 <span class="dl-name" id="dlNavn">kantinemedarbeider.docx</span>
               </div>
               <span class="dl-pil">→</span>
-            </a>
+            </button>
             <div>
               <span class="preview-label">Forhåndsvisning av innhold</span>
               <div class="preview-box" id="previewBox"></div>
@@ -1028,6 +1033,19 @@ function esc(s) {
     .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+// Lagre nedlastingsdata globalt
+let nedlastingData = { url: null, filnavn: null };
+
+function utforNedlasting() {
+  if (!nedlastingData.url) return;
+  const a = document.createElement('a');
+  a.href = nedlastingData.url;
+  a.download = nedlastingData.filnavn;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
 async function lagDocx(innhold, temaNavnArg, nivå) {
   const linjer = innhold.split('\n');
   const bodyXml = byggBodyXml(linjer);
@@ -1039,9 +1057,11 @@ async function lagDocx(innhold, temaNavnArg, nivå) {
     .replace(/\s+/g,'_').replace(/æ/g,'ae').replace(/ø/g,'oe').replace(/å/g,'aa')
     .replace(/[^a-z0-9_]/g,'') + '_' + nivå + '.docx';
 
+  // Lagre for nedlasting
+  nedlastingData = { url, filnavn };
+
   document.getElementById('dlNavn').textContent = filnavn;
-  document.getElementById('dlBtn').href = url;
-  document.getElementById('dlBtn').download = filnavn;
+  document.getElementById('dlBtn').disabled = false;
   document.getElementById('resultTitle').textContent = `${temaNavnArg} (${nivå}) – klar!`;
   document.getElementById('resultDesc').textContent = `${filnavn} · Word-dokument`;
   document.getElementById('previewBox').textContent = innhold.substring(0,900) + '\n\n[… fortsetter i Word-filen …]';
