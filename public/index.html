@@ -864,7 +864,16 @@ Etter denne uken kan jeg:
 • [mål 3]
 
 UKES-ORDLISTE
-[Lag tabell: Ord | Forklaring på enkel norsk | Mine notater – 12 ord fra temaet]
+ORDLISTE:1. [norsk ord eller uttrykk] – [kort forklaring på enkel norsk]
+ORDLISTE:2. [norsk ord eller uttrykk] – [kort forklaring på enkel norsk]
+ORDLISTE:3. [norsk ord eller uttrykk] – [kort forklaring på enkel norsk]
+ORDLISTE:4. [norsk ord eller uttrykk] – [kort forklaring på enkel norsk]
+ORDLISTE:5. [norsk ord eller uttrykk] – [kort forklaring på enkel norsk]
+ORDLISTE:6. [norsk ord eller uttrykk] – [kort forklaring på enkel norsk]
+ORDLISTE:7. [norsk ord eller uttrykk] – [kort forklaring på enkel norsk]
+ORDLISTE:8. [norsk ord eller uttrykk] – [kort forklaring på enkel norsk]
+ORDLISTE:9. [norsk ord eller uttrykk] – [kort forklaring på enkel norsk]
+ORDLISTE:10. [norsk ord eller uttrykk] – [kort forklaring på enkel norsk]
 
 ════════════════════
 MANDAG
@@ -1047,8 +1056,25 @@ function utforNedlasting() {
 }
 
 async function lagDocx(innhold, temaNavnArg, nivå) {
+  // ── Parse ORDLISTE-linjer fra API-svaret ─────────────
+  const ordlisteLinjer = innhold.split('\n')
+    .filter(l => l.trim().startsWith('ORDLISTE:'));
+  const ord = [];
+  for (const l of ordlisteLinjer) {
+    // Format: ORDLISTE:1. norsk ord – forklaring
+    const m = l.match(/ORDLISTE:\d+\.?\s*(.+)/);
+    if (m) ord.push(m[1].trim());
+  }
+
+  // Bygg kropp med faktiske ord i tabellen
   const linjer = innhold.split('\n');
-  const bodyXml = byggBodyXml(linjer);
+  let bodyXml = byggBodyXml(linjer, temaNavnArg, nivå);
+
+  // Erstatt ORD_N_PLACEHOLDER med faktiske ord fra AI
+  for (let i = 1; i <= 10; i++) {
+    const ordTekst = ord[i-1] || '';
+    bodyXml = bodyXml.replace(`ORD_${i}_PLACEHOLDER`, ordTekst.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'));
+  }
   const docxBytes = byggDocxZip(bodyXml);
   const blob = new Blob([docxBytes], { type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
   const url = URL.createObjectURL(blob);
@@ -1069,7 +1095,7 @@ async function lagDocx(innhold, temaNavnArg, nivå) {
   visState('result');
 }
 
-function byggBodyXml(linjer) {
+function byggBodyXml(linjer, temaNavn, cefrNivå) {
   // Fargepalett - pedagogisk og blekkvennlig
   const NAVY    = '1F4E79';  // Mørk blå - kun til overskrifter
   const TEAL    = '1D6A5B';  // Dyp grønn - lesetekster
@@ -1140,7 +1166,7 @@ function byggBodyXml(linjer) {
         <w:pPr><w:jc w:val="right"/><w:spacing w:after="0"/></w:pPr>
         <w:r><w:rPr><w:b/><w:color w:val="FFD966"/><w:sz w:val="28"/><w:szCs w:val="28"/>
           <w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr>
-          <w:t>TEMA_PLACEHOLDER</w:t></w:r>
+          <w:t xml:space="preserve">${esc(temaNavn)}  |  ${cefrNivå}</w:t></w:r>
       </w:p>
     </w:tc>
   </w:tr>
@@ -1253,10 +1279,19 @@ function byggBodyXml(linjer) {
       i++; continue;
     }
 
-    // UKES-ORDLISTE
+    // UKES-ORDLISTE – generer fast tabell med 10 tomme rader
     if (t === 'UKES-ORDLISTE') {
       body += boksOverskrift('📝 UKES-ORDLISTE', LGREEN, TEAL, 24);
-      i++; continue;
+      body += ordlisteTabell(LGREEN, TEAL);
+      // Hopp over eventuelle linjer frem til neste seksjon (blank/tabell fra AI)
+      i++;
+      while (i < linjer.length) {
+        const neste = linjer[i].trim();
+        // Stopp hvis vi treffer en dagnavn, LÆRINGSMÅL eller tom linje etter innhold
+        if (neste === '' || ['MANDAG','TIRSDAG','ONSDAG','TORSDAG','FREDAG','LÆRINGSMÅL','════════════════════'].some(s => neste.startsWith(s))) break;
+        i++;
+      }
+      continue;
     }
 
     // Muntlig øvelse
@@ -1295,6 +1330,143 @@ function byggBodyXml(linjer) {
     i++;
   }
   return body;
+}
+
+// ── UKES-ORDLISTE: Fast Word-tabell med 10 ord ────────────
+function ordlisteTabell(headerFyll, headerTekst) {
+  // 3 kolonner: Nr | Norsk ord | Oversettelse (elevene fyller inn)
+  // Bredder: 600 + 4200 + 4226 = 9026 DXA
+  const kolBredder = [600, 4226, 4200];
+  const headers = ['Nr.', 'Norsk ord og forklaring', 'Oversettelse (mitt språk)'];
+
+  let xml = `
+<w:p><w:pPr><w:spacing w:before="80" w:after="0"/></w:pPr></w:p>
+<w:tbl>
+<w:tblPr>
+  <w:tblW w:w="9026" w:type="dxa"/>
+  <w:tblBorders>
+    <w:top w:val="single" w:sz="6" w:color="${headerTekst}" w:space="0"/>
+    <w:bottom w:val="single" w:sz="6" w:color="${headerTekst}" w:space="0"/>
+    <w:left w:val="none"/>
+    <w:right w:val="none"/>
+    <w:insideH w:val="single" w:sz="4" w:color="C8E6C9" w:space="0"/>
+    <w:insideV w:val="none"/>
+  </w:tblBorders>
+</w:tblPr>
+<w:tblGrid>
+  <w:gridCol w:w="600"/>
+  <w:gridCol w:w="4226"/>
+  <w:gridCol w:w="4200"/>
+</w:tblGrid>`;
+
+  // Header-rad
+  xml += `
+<w:tr>
+  <w:trPr><w:tblHeader/><w:trHeight w:val="440" w:hRule="atLeast"/></w:trPr>`;
+
+  headers.forEach((hdr, idx) => {
+    const jc = idx === 0 ? 'center' : 'left';
+    xml += `
+  <w:tc>
+    <w:tcPr>
+      <w:tcW w:w="${kolBredder[idx]}" w:type="dxa"/>
+      <w:shd w:val="clear" w:fill="${headerFyll}" w:color="auto"/>
+      <w:tcMar>
+        <w:top w:w="80" w:type="dxa"/>
+        <w:bottom w:w="80" w:type="dxa"/>
+        <w:left w:w="160" w:type="dxa"/>
+        <w:right w:w="160" w:type="dxa"/>
+      </w:tcMar>
+    </w:tcPr>
+    <w:p>
+      <w:pPr><w:jc w:val="${jc}"/><w:spacing w:after="0"/></w:pPr>
+      <w:r><w:rPr>
+        <w:b/><w:color w:val="${headerTekst}"/>
+        <w:sz w:val="20"/><w:szCs w:val="20"/>
+        <w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/>
+      </w:rPr><w:t xml:space="preserve">${esc(hdr)}</w:t></w:r>
+    </w:p>
+  </w:tc>`;
+  });
+  xml += `
+</w:tr>`;
+
+  // 10 datalinjer – veksler lys grønn / hvit
+  for (let nr = 1; nr <= 10; nr++) {
+    const radFyll = nr % 2 === 0 ? 'F4FAF6' : 'FFFFFF';
+    xml += `
+<w:tr>
+  <w:trPr><w:trHeight w:val="560" w:hRule="atLeast"/></w:trPr>
+  <!-- Nr-celle -->
+  <w:tc>
+    <w:tcPr>
+      <w:tcW w:w="600" w:type="dxa"/>
+      <w:shd w:val="clear" w:fill="${radFyll}" w:color="auto"/>
+      <w:tcMar>
+        <w:top w:w="80" w:type="dxa"/>
+        <w:bottom w:w="80" w:type="dxa"/>
+        <w:left w:w="160" w:type="dxa"/>
+        <w:right w:w="160" w:type="dxa"/>
+      </w:tcMar>
+      <w:vAlign w:val="center"/>
+    </w:tcPr>
+    <w:p>
+      <w:pPr><w:jc w:val="center"/><w:spacing w:after="0"/></w:pPr>
+      <w:r><w:rPr>
+        <w:b/><w:color w:val="${headerTekst}"/>
+        <w:sz w:val="20"/><w:szCs w:val="20"/>
+        <w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/>
+      </w:rPr><w:t>${nr}</w:t></w:r>
+    </w:p>
+  </w:tc>
+  <!-- Norsk ord-celle (fylles inn av AI via prompt) -->
+  <w:tc>
+    <w:tcPr>
+      <w:tcW w:w="4226" w:type="dxa"/>
+      <w:shd w:val="clear" w:fill="${radFyll}" w:color="auto"/>
+      <w:tcMar>
+        <w:top w:w="80" w:type="dxa"/>
+        <w:bottom w:w="80" w:type="dxa"/>
+        <w:left w:w="160" w:type="dxa"/>
+        <w:right w:w="160" w:type="dxa"/>
+      </w:tcMar>
+      <w:vAlign w:val="center"/>
+    </w:tcPr>
+    <w:p>
+      <w:pPr><w:spacing w:after="0"/></w:pPr>
+      <w:r><w:rPr>
+        <w:color w:val="1A1A1A"/>
+        <w:sz w:val="22"/><w:szCs w:val="22"/>
+        <w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/>
+      </w:rPr><w:t xml:space="preserve">ORD_${nr}_PLACEHOLDER</w:t></w:r>
+    </w:p>
+  </w:tc>
+  <!-- Oversettelse-celle (blank – eleven fyller inn) -->
+  <w:tc>
+    <w:tcPr>
+      <w:tcW w:w="4200" w:type="dxa"/>
+      <w:shd w:val="clear" w:fill="FAFFF8" w:color="auto"/>
+      <w:tcMar>
+        <w:top w:w="80" w:type="dxa"/>
+        <w:bottom w:w="80" w:type="dxa"/>
+        <w:left w:w="160" w:type="dxa"/>
+        <w:right w:w="160" w:type="dxa"/>
+      </w:tcMar>
+    </w:tcPr>
+    <w:p>
+      <w:pPr><w:spacing w:after="0"/></w:pPr>
+      <w:r><w:rPr>
+        <w:sz w:val="22"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/>
+      </w:rPr><w:t></w:t></w:r>
+    </w:p>
+  </w:tc>
+</w:tr>`;
+  }
+
+  xml += `
+</w:tbl>
+<w:p><w:pPr><w:spacing w:after="160"/></w:pPr></w:p>`;
+  return xml;
 }
 
 // ── MARKDOWN-TABELL → WORD-TABELL ────────────────────────
