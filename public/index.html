@@ -1103,26 +1103,6 @@ async function lagDocx(innhold, temaNavnArg, nivå) {
   visState('result');
 }
 
-// ── DUMMY: Ikke lenger brukt – docx lages på server ──
-  const docxBytes = byggDocxZip(bodyXml);
-  const blob = new Blob([docxBytes], { type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-  const url = URL.createObjectURL(blob);
-
-  const filnavn = temaNavnArg.toLowerCase()
-    .replace(/\s+/g,'_').replace(/æ/g,'ae').replace(/ø/g,'oe').replace(/å/g,'aa')
-    .replace(/[^a-z0-9_]/g,'') + '_' + nivå + '.docx';
-
-  // Lagre for nedlasting
-  nedlastingData = { url, filnavn };
-
-  document.getElementById('dlNavn').textContent = filnavn;
-  document.getElementById('dlBtn').disabled = false;
-  document.getElementById('resultTitle').textContent = `${temaNavnArg} (${nivå}) – klar!`;
-  document.getElementById('resultDesc').textContent = `${filnavn} · Word-dokument`;
-  document.getElementById('previewBox').textContent = innhold.substring(0,900) + '\n\n[… fortsetter i Word-filen …]';
-  document.getElementById('outputBadge').textContent = '✓ Generert';
-  visState('result');
-}
 
 function byggBodyXml(linjer, temaNavn, cefrNivå) {
   // Fargepalett - pedagogisk og blekkvennlig
