@@ -171,15 +171,16 @@ header {
 
 /* ─── GENERATE BTN ──────────────────────────────── */
 .gen-btn {
-  width:100%; padding:15px;
-  background:var(--amber); color:var(--navy);
-  border:none; border-radius:12px;
-  font-family:'DM Serif Display',serif; font-size:1rem;
+  width:100%; padding:18px 20px;
+  background:linear-gradient(135deg,#e8a030 0%,#f5b535 100%);
+  color:var(--navy); border:none; border-radius:14px;
+  font-family:'DM Serif Display',serif;
   cursor:pointer; transition:all .2s;
-  display:flex; align-items:center; justify-content:center; gap:9px;
-  box-shadow:0 4px 16px rgba(232,160,48,.3);
+  display:flex; align-items:center; gap:14px;
+  box-shadow:0 6px 20px rgba(232,160,48,.45);
+  text-align:left;
 }
-.gen-btn:hover:not(:disabled) { background:#f0b040; transform:translateY(-1px); box-shadow:0 6px 20px rgba(232,160,48,.42); }
+.gen-btn:hover:not(:disabled) { background:linear-gradient(135deg,#f0b040 0%,#ffc244 100%); transform:translateY(-2px); box-shadow:0 10px 28px rgba(232,160,48,.55); }
 .gen-btn:disabled { opacity:.45; cursor:not-allowed; transform:none; }
 
 /* ─── MAIN CONTENT ──────────────────────────────── */
@@ -263,39 +264,92 @@ header {
 .progress-bar { width:260px; height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
 .progress-fill { height:100%; background:var(--teal); border-radius:2px; transition:width .5s ease; width:0%; }
 
-.result-state { display:none; flex-direction:column; gap:14px; }
+.result-state { display:none; flex-direction:column; gap:18px; }
 .result-state.vis { display:flex; }
+
+/* ── Suksess-banner ── */
 .result-info {
   background:linear-gradient(135deg,#e8f7f5,#d4f0eb);
-  border:1px solid #a7ddd7; border-radius:10px;
-  padding:14px 18px; display:flex; align-items:center; gap:14px;
+  border:1px solid #a7ddd7; border-radius:12px;
+  padding:16px 20px; display:flex; align-items:center; gap:14px;
 }
-.result-check { width:38px; height:38px; flex-shrink:0; background:var(--teal); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:16px; }
-.result-info h4 { font-size:.92rem; font-weight:600; color:var(--teal); }
-.result-info p { font-size:.77rem; color:#4a8e88; margin-top:2px; }
+.result-check {
+  width:40px; height:40px; flex-shrink:0;
+  background:var(--teal); border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size:18px;
+}
+.result-info h4 { font-size:.95rem; font-weight:600; color:var(--teal); }
+.result-info p { font-size:.78rem; color:#4a8e88; margin-top:2px; }
 
+/* ── STOR NEDLASTINGSKNAPP ── */
+@keyframes nedlastPuls {
+  0%,100% { box-shadow: 0 6px 24px rgba(26,122,110,.45); }
+  50%      { box-shadow: 0 10px 36px rgba(26,122,110,.75); }
+}
 .dl-btn {
-  display:flex; align-items:center; gap:11px;
-  padding:13px 18px;
-  background:var(--navy); color:#fff;
-  border:none; border-radius:9px;
+  display:flex; align-items:center; gap:18px;
+  padding:22px 28px;
+  background:linear-gradient(135deg, var(--teal) 0%, #1a9a8a 100%);
+  color:#fff;
+  border:none; border-radius:16px;
   cursor:pointer; font-family:'DM Sans',sans-serif;
-  font-size:.86rem; font-weight:500;
-  text-decoration:none; transition:background .18s;
+  text-decoration:none;
+  transition:all .22s ease;
+  animation: nedlastPuls 2.2s ease-in-out infinite;
+  position:relative; overflow:hidden;
 }
-.dl-btn:hover { background:var(--navy-mid); }
-.dl-icon { font-size:17px; }
-.dl-info { text-align:left; }
-.dl-name { font-weight:600; }
-.dl-size { font-size:.72rem; opacity:.6; }
+.dl-btn::before {
+  content:'';
+  position:absolute; top:0; left:-100%;
+  width:60%; height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);
+  animation: shine 2.8s ease-in-out infinite;
+}
+@keyframes shine {
+  0%   { left:-100%; }
+  50%,100% { left:160%; }
+}
+.dl-btn:hover {
+  background:linear-gradient(135deg, #1a9a8a 0%, #20b89f 100%);
+  transform:translateY(-3px);
+  box-shadow:0 14px 40px rgba(26,122,110,.55);
+  animation:none;
+}
+.dl-btn:active { transform:translateY(-1px); }
+.dl-icon-wrap {
+  width:52px; height:52px; flex-shrink:0;
+  background:rgba(255,255,255,.18);
+  border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:26px;
+}
+.dl-info { text-align:left; flex:1; }
+.dl-tittel {
+  font-family:'DM Serif Display',serif;
+  font-size:1.15rem; font-weight:400;
+  display:block; margin-bottom:3px;
+}
+.dl-name { font-size:.82rem; opacity:.8; display:block; font-weight:400; }
+.dl-pil {
+  font-size:1.4rem; opacity:.7; flex-shrink:0;
+  transition:transform .2s;
+}
+.dl-btn:hover .dl-pil { transform:translateX(4px); opacity:1; }
 
+/* ── Forhåndsvisning (liten og diskret) ── */
 .preview-box {
   background:var(--cream); border:1px solid var(--border);
-  border-radius:9px; padding:18px;
-  font-size:.78rem; line-height:1.8; color:var(--text);
-  max-height:300px; overflow-y:auto;
+  border-radius:9px; padding:14px 18px;
+  font-size:.74rem; line-height:1.75; color:#888;
+  max-height:180px; overflow-y:auto;
   font-family:'DM Mono','Courier New',monospace;
   white-space:pre-wrap;
+}
+.preview-label {
+  font-size:.7rem; font-weight:600; color:var(--muted);
+  text-transform:uppercase; letter-spacing:.05em;
+  margin-bottom:6px; display:block;
 }
 
 .error-box {
@@ -373,7 +427,11 @@ header {
 
       <!-- GENERATE -->
       <button class="gen-btn" id="genBtn" onclick="generer()">
-        <span>⚡</span><span>Generer ukesark</span>
+        <span style="font-size:1.6rem;flex-shrink:0">📄</span>
+        <div>
+          <span style="font-size:1.15rem;font-weight:700;display:block;letter-spacing:.01em">Generer arbeidsark</span>
+          <span style="font-size:.72rem;font-family:'DM Sans',sans-serif;font-weight:400;opacity:.7;display:block;margin-top:2px">Lager Word-dokument (.docx)</span>
+        </div>
       </button>
 
     </aside>
@@ -462,13 +520,17 @@ header {
               </div>
             </div>
             <a href="#" class="dl-btn" id="dlBtn" download>
-              <span class="dl-icon">📥</span>
+              <div class="dl-icon-wrap">📥</div>
               <div class="dl-info">
-                <div class="dl-name" id="dlNavn">kantinemedarbeider.docx</div>
-                <div class="dl-size">Word-dokument · .docx</div>
+                <span class="dl-tittel">Last ned arbeidsark</span>
+                <span class="dl-name" id="dlNavn">kantinemedarbeider.docx</span>
               </div>
+              <span class="dl-pil">→</span>
             </a>
-            <div class="preview-box" id="previewBox"></div>
+            <div>
+              <span class="preview-label">Forhåndsvisning av innhold</span>
+              <div class="preview-box" id="previewBox"></div>
+            </div>
           </div>
           <div class="error-box" id="errorBox"></div>
         </div>
@@ -672,26 +734,115 @@ async function genererNivå(tema, nivå) {
 
 // ─── PROMPT ──────────────────────────────────────────────
 function byggPrompt(temaNavnArg, nivå) {
+
+  // ── DETALJERTE CEFR-BESKRIVELSER ────────────────────────
   const nivåInfo = {
-    A1: 'SVÆRT enkle setninger (3–5 ord). Alltid ordbank. Matching og avkrysning. Bildestøtte [BILDE: ...].',
-    A2: 'Korte setninger. Enkle tekster (5–8 setninger). Fill-in-the-blank, sant/usant, enkle spørsmål.',
-    B1: 'Middels tekster (8–12 setninger). Skriveoppgaver, åpne svar, argumentasjon.',
-    B2: 'Lengre tekster (12–15 setninger). Formelt/uformelt register. Analyse og diskusjon.'
-  };
-  const gramFokus = {
-    A1: 'presens, subjekt+verb+objekt, personlige pronomen, tall',
-    A2: 'V2-regelen, inversjon, preteritum, adjektivbøying, preposisjoner',
-    B1: 'perfektum, modalverb, leddsetninger (fordi/når/hvis), sammensatte ord',
-    B2: 'passiv, kondisjonalis, avansert setningsbygging, formelt vs. uformelt register'
+
+    A1: `NIVÅ A1 – Absolutt nybegynner. Eleven forstår og bruker svært enkle uttrykk.
+LESETEKSTER: Maks 3–4 korte setninger per tekst. Maks 5–7 ord per setning.
+Kun presens. Kun kjente, hverdagslige ord. Ingen bi-setninger. Ingen inversjon.
+Eksempel på A1-setning: "Mari vasker bordet. Det er rent nå."
+OPPGAVETYPER: Matching (koble ord til bilde/definisjon), avkrysning (riktig/galt),
+fyll inn ETT ord fra ordbank, nummerere bilder i riktig rekkefølge.
+ORDBANK: ALLTID inkludert ved fyll-inn-oppgaver. Maks 6 ord i ordbanken.
+BILDESTØTTE: Marker med [BILDE: beskrivelse] der et bilde hjelper forståelsen.
+GRAMMATIKK: Kun presens av være/ha + svake verb. Subjekt + verb + objekt.
+Personlige pronomen (jeg, du, han/hun, vi). Tall 1–20. Farger og størrelser.
+SKRIVING: Eleven kopierer eller fyller inn enkeltord – aldri fri skriving.`,
+
+    A2: `NIVÅ A2 – Grunnleggende. Eleven forstår enkle tekster om kjente emner.
+LESETEKSTER: 5–7 setninger per tekst. Maks 10–12 ord per setning.
+Kan bruke preteritum og noen enkle bindeord (og, men, eller, fordi).
+Tydelig struktur: én tanke per setning.
+Eksempel på A2-setning: "Kari jobber i kantinen. Hun lager mat til de ansatte hver dag."
+OPPGAVETYPER: Sant/Usant med teksthenvisning, fyll inn ord/form fra ordbank (valgfritt),
+enkle spørsmål med korte svar (1–2 setninger), koble setningshalvdeler,
+sett ord i riktig rekkefølge (V2-trening).
+GRAMMATIKK: V2-regelen (inversjon ved adverbial fremst). Presens og preteritum av
+vanlige verb. Enkel adjektivbøying (en stor tallerken / et stort glass).
+Vanlige preposisjoner (i, på, ved, til, fra). Spørreord (hva, hvem, hvor, når).
+SKRIVING: Skriv 2–4 egne setninger med støttestruktur (setningsstartere gitt).`,
+
+    B1: `NIVÅ B1 – Mellomnivå. Eleven forstår hovedpunktene i klare standardtekster.
+LESETEKSTER: 8–12 setninger per tekst. Kan inneholde bi-setninger og fagord.
+Teksten kan ha en problemstilling eller et synspunkt som eleven skal ta stilling til.
+Eksempel på B1-setning: "Hvis du oppdager at maten er utgått på dato, skal du straks
+ta den ut av kantinen og melde fra til lederen din."
+OPPGAVETYPER: Åpne spørsmål (svar i 2–4 setninger), finn hovedbudskapet,
+skriv en kort tekst (8–10 setninger), ordforklaringer med egne ord,
+jumbled sentences (sett om til korrekt V2-setning), diskusjonsoppgaver.
+GRAMMATIKK: Perfektum (har + partisipp). Modalverb (må, kan, skal, bør, vil).
+Leddsetninger med fordi, når, hvis, selv om, at. Sammensatte substantiv.
+Refleksive verb. Passiv med -s (maten varmes opp) eller bli (maten ble kastet).
+SKRIVING: Skriv sammenhengende tekst (8–10 setninger) om eget valgt emne fra temaet.`,
+
+    B2: `NIVÅ B2 – Videregående. Eleven forstår komplekse tekster og kan argumentere.
+LESETEKSTER: 12–16 setninger per tekst. Kan inneholde fagterminologi, ironi,
+underforståtte holdninger og sammensatte resonnementer. Teksten kan ha
+mot-argumenter eller nyanser som krever kritisk lesning.
+Eksempel på B2-setning: "Selv om mange ansatte opplever matsvinn som uunngåelig,
+viser forskning at systematisk planlegging kan redusere svinnet med opptil 40 prosent."
+OPPGAVETYPER: Argumenterende skriveoppgave (ta stilling til et standpunkt),
+analyser teksten (forfatterens intensjon, virkemidler, målgruppe),
+sammenlign to tekster, skriv en profesjonell e-post eller rapport,
+diskuter etiske dilemmaer fra kantineyrket.
+GRAMMATIKK: Passiv i alle tider. Kondisjonalis (ville ha + partisipp).
+Avansert setningsbygging med flere leddsetninger. Formelt vs. uformelt register –
+eleven skal vise at de behersker begge. Nominalisering (å vaske → vasking/vask).
+Konjunktivar og setningsforkortelser. Faglig presisjon i ordvalg.
+SKRIVING: Argumenterende tekst (12–15 setninger) med innledning, hoveddel og avslutning.`
   };
 
-  return `Du er en erfaren norsklærer ved Molde voksenopplæringssenter (MBO). Du lager ukesoppgaver for voksne innvandrere.
+  // ── GRAMMATIKKFOKUS PER NIVÅ ────────────────────────────
+  const gramFokus = {
+    A1: 'presens av være/ha og svake verb, subjekt+verb+objekt, personlige pronomen (jeg/du/han/hun/vi/dere/de), tall 1–20',
+    A2: 'V2-regelen og inversjon ved adverbial fremst, presens og preteritum av vanlige verb, enkel adjektivbøying (en/ei/et), de vanligste preposisjonene (i/på/til/fra/ved/med)',
+    B1: 'perfektum (har+partisipp), modalverb (må/kan/skal/bør/vil), leddsetninger med fordi/når/hvis/selv om/at, sammensatte substantiv, passiv med -s og bli-passiv',
+    B2: 'passiv i alle tider, kondisjonalis (ville ha+partisipp), avansert setningsbygging med flere leddsetninger, formelt vs. uformelt register, nominalisering, faglig presisjon'
+  };
+
+  // ── OPPGAVETYPETABELL ────────────────────────────────────
+  const oppgavetyper = {
+    A1: 'Matching, avkrysning (riktig/feil), fyll inn ETT ord fra ordbank, nummerer i rekkefølge, koble ord til bilde',
+    A2: 'Sant/Usant, fyll inn ord/form (med eller uten ordbank), koble setningshalvdeler, sett ord i riktig rekkefølge, enkle spørsmål med korte svar',
+    B1: 'Åpne spørsmål (2–4 setninger), finn hovedbudskapet, jumbled sentences, skriv kort tekst (8–10 setninger), ordforklaringer med egne ord',
+    B2: 'Argumenterende skriveoppgave, tekstanalyse, sammenlign to tekster, profesjonell e-post/rapport, diskuter etiske dilemmaer'
+  };
+
+  // ── TEKSTLENGDE ──────────────────────────────────────────
+  const tekstlengde = {
+    A1: '3–4 setninger, maks 5–7 ord per setning',
+    A2: '5–7 setninger, maks 10–12 ord per setning',
+    B1: '8–12 setninger, bi-setninger tillatt',
+    B2: '12–16 setninger, fagterminologi og sammensatte resonnementer'
+  };
+
+  return `Du er en erfaren norsklærer ved Molde voksenopplæringssenter (MBO). Du lager ukesoppgaver for voksne innvandrere i faget kantinemedarbeider.
+
+╔══════════════════════════════════════════════════╗
+  OPPDRAGET DITT
+╚══════════════════════════════════════════════════╝
 
 TEMA: ${temaNavnArg}
-CEFR-NIVÅ: ${nivå} — ${nivåInfo[nivå]}
-GRAMMATIKKFOKUS DENNE UKEN: ${gramFokus[nivå]}
+CEFR-NIVÅ: ${nivå}
 NORSKNORM: Bokmål
 YRKE: Kantinemedarbeider
+
+── DETALJERT NIVÅBESKRIVELSE ──────────────────────
+${nivåInfo[nivå]}
+
+── GRAMMATIKKFOKUS DENNE UKEN ─────────────────────
+${gramFokus[nivå]}
+
+── ANBEFALTE OPPGAVETYPER FOR DETTE NIVÅET ────────
+${oppgavetyper[nivå]}
+
+── TEKSTLENGDE PER LESETEKST ──────────────────────
+${tekstlengde[nivå]}
+
+VIKTIG: Du MÅ tilpasse ALT innhold til nivå ${nivå}.
+Ikke bruk oppgavetyper, setningslengder eller grammatikk fra andre nivåer.
+En A1-elev og en B2-elev skal ikke gjenkjenne hverandres oppgaver.
 
 Lag et KOMPLETT UKESARK med nøyaktig denne strukturen:
 
@@ -847,7 +998,7 @@ Oppgave 1: a) ___ b) ___ c) ___ d) ___ e) ___
 
 ─────────────────────────────────────────────────────────
 
-VIKTIGE KRAV:
+VIKTIGE KRAV – INNHOLD:
 - Korrekt bokmål gjennom hele dokumentet
 - Alle oppgaver starter på ny linje
 - Enkelt linjeskift mellom a–e
@@ -855,7 +1006,19 @@ VIKTIGE KRAV:
 - Tekstene skal være autentiske og relevante for kantineyrket
 - Grammatikk og ordforråd knyttes alltid til lesetekstene
 - Nivå ${nivå}: ${nivåInfo[nivå]}
-- MBO-elever er voksne innvandrere – respektfull og profesjonell tone`;
+- MBO-elever er voksne innvandrere – respektfull og profesjonell tone
+
+VIKTIGE KRAV – PEDAGOGISK DESIGN (følges alltid):
+- LUFTIGHET: Skriv korte avsnitt – maks 4–5 linjer sammenhengende tekst. Bruk linjeskift aktivt for å skape luft og lesepause.
+- STRUKTUR: Hver dag følger alltid samme rekkefølge: Lesetekst → Leseforståelse → Grammatikk → Ordforråd → Muntlig. Aldri avvik fra denne rekkefølgen.
+- TYDELIGE OPPGAVENUMMER: Skriv alltid "Oppgave 1 – [type]" på egen linje, deretter a) b) c) d) e) – hvert punkt på sin egen linje.
+- NIVÅTILPASNING: Setningslengde, tekstlengde og oppgavekompleksitet MÅ speile CEFR-nivå ${nivå} nøyaktig. A1 = maksimalt enkelt. B2 = faglig krevende.
+- KONTEKSTNÆRHET: Alle eksempler, navn og situasjoner skal hentes fra kantineyrket. Ingen generiske eksempler.
+- MESTRING FØRST: Bygg opp fra enklere til vanskeligere oppgaver innen hver dag. Eleven skal oppleve mestring tidlig.
+- BLEKKVENNLIG: Unngå lange heldekkende svarte tekstblokker. Bruk korte setninger og naturlige pauser – sparer blekk ved utskrift.
+- FASIT SIST: Fasiten skal alltid stå helt til slutt, tydelig adskilt. Aldri fasit midt i dokumentet.
+- WCAG-KONTRAST: Mørk tekst på lys bakgrunn. Aldri hvit tekst på hvit bakgrunn eller lys tekst på lys bakgrunn.
+- RESPEKTFULL TONE: Tekster og oppgaver behandler eleven som en kompetent voksen. Ingen barnlige eksempler.`;
 }
 
 // ─── DOCX BUILDER ────────────────────────────────────────
@@ -887,122 +1050,519 @@ async function lagDocx(innhold, temaNavnArg, nivå) {
 }
 
 function byggBodyXml(linjer) {
-  const NAVY='1F4E79', TEAL='1a7a6e', LIGHTBLUE='D6E4F0',
-        LIGHTGREEN='EAF4EA', LIGHTYELLOW='FFF3CD', LIGHTGRAY='F5F5F5';
-  let body='', prevBlank=false, inFasit=false;
+  // Fargepalett - pedagogisk og blekkvennlig
+  const NAVY    = '1F4E79';  // Mørk blå - kun til overskrifter
+  const TEAL    = '1D6A5B';  // Dyp grønn - lesetekster
+  const LBLUE   = 'E8F4FD';  // Lys blå - læringsmål
+  const LGREEN  = 'EAF7F0';  // Lys grønn - ordliste
+  const LYELLOW = 'FFFBEC';  // Lys gul - muntlig
+  const LGRAY   = 'F5F5F5';  // Lys grå - fasit
+  const LPEACH  = 'FFF0E8';  // Lys fersken - oppgaveoverskrift
+  const BORDER  = 'BDD7EE';  // Blå kantlinje
+  const TGREEN  = 'A8D5C2';  // Grønn kantlinje
+  const AMBER   = 'E8A030';  // Gul - læringsmål-stripe
 
-  // Header table
+  let body = '', prevBlank = false, inFasit = false;
+
+  // ── TOPPTEKST (to-kolonne: institusjon + tema/nivå) ──────────────
   body += `
 <w:tbl>
-  <w:tblPr><w:tblW w:w="9026" w:type="dxa"/>
+  <w:tblPr>
+    <w:tblW w:w="9026" w:type="dxa"/>
     <w:tblBorders>
-      <w:top w:val="single" w:sz="6" w:color="${NAVY}"/>
-      <w:bottom w:val="single" w:sz="6" w:color="${NAVY}"/>
-      <w:left w:val="single" w:sz="6" w:color="${NAVY}"/>
-      <w:right w:val="single" w:sz="6" w:color="${NAVY}"/>
+      <w:top w:val="single" w:sz="12" w:color="${NAVY}"/>
+      <w:bottom w:val="single" w:sz="12" w:color="${NAVY}"/>
+      <w:left w:val="none"/>
+      <w:right w:val="none"/>
+      <w:insideH w:val="none"/>
+      <w:insideV w:val="none"/>
+    </w:tblBorders>
+    <w:shd w:val="clear" w:fill="${NAVY}" w:color="auto"/>
+  </w:tblPr>
+  <w:tr>
+    <w:tc>
+      <w:tcPr>
+        <w:tcW w:w="5400" w:type="dxa"/>
+        <w:shd w:val="clear" w:fill="${NAVY}" w:color="auto"/>
+        <w:tcMar>
+          <w:top w:w="200" w:type="dxa"/>
+          <w:bottom w:w="200" w:type="dxa"/>
+          <w:left w:w="240" w:type="dxa"/>
+          <w:right w:w="120" w:type="dxa"/>
+        </w:tcMar>
+      </w:tcPr>
+      <w:p>
+        <w:pPr><w:spacing w:after="0"/></w:pPr>
+        <w:r><w:rPr><w:b/><w:color w:val="FFFFFF"/><w:sz w:val="22"/><w:szCs w:val="22"/>
+          <w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr>
+          <w:t>Molde voksenopplæringssenter</w:t></w:r>
+      </w:p>
+      <w:p>
+        <w:pPr><w:spacing w:after="0"/></w:pPr>
+        <w:r><w:rPr><w:color w:val="AACCDD"/><w:sz w:val="18"/><w:szCs w:val="18"/>
+          <w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr>
+          <w:t>MBO – Kantinemedarbeider</w:t></w:r>
+      </w:p>
+    </w:tc>
+    <w:tc>
+      <w:tcPr>
+        <w:tcW w:w="3626" w:type="dxa"/>
+        <w:shd w:val="clear" w:fill="163A5A" w:color="auto"/>
+        <w:tcMar>
+          <w:top w:w="200" w:type="dxa"/>
+          <w:bottom w:w="200" w:type="dxa"/>
+          <w:left w:w="200" w:type="dxa"/>
+          <w:right w:w="240" w:type="dxa"/>
+        </w:tcMar>
+        <w:vAlign w:val="center"/>
+      </w:tcPr>
+      <w:p>
+        <w:pPr><w:jc w:val="right"/><w:spacing w:after="0"/></w:pPr>
+        <w:r><w:rPr><w:b/><w:color w:val="FFD966"/><w:sz w:val="28"/><w:szCs w:val="28"/>
+          <w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr>
+          <w:t>TEMA_PLACEHOLDER</w:t></w:r>
+      </w:p>
+    </w:tc>
+  </w:tr>
+</w:tbl>
+<w:tbl>
+  <w:tblPr>
+    <w:tblW w:w="9026" w:type="dxa"/>
+    <w:tblBorders>
+      <w:top w:val="none"/>
+      <w:bottom w:val="single" w:sz="4" w:color="CCCCCC"/>
+      <w:left w:val="none"/><w:right w:val="none"/>
     </w:tblBorders>
   </w:tblPr>
-  <w:tr><w:tc>
-    <w:tcPr><w:tcW w:w="9026" w:type="dxa"/>
-      <w:shd w:val="clear" w:fill="${NAVY}" w:color="auto"/>
-      <w:tcMar><w:top w:w="160" w:type="dxa"/><w:bottom w:w="160" w:type="dxa"/>
-               <w:left w:w="200" w:type="dxa"/><w:right w:w="200" w:type="dxa"/></w:tcMar>
-    </w:tcPr>
-    <w:p><w:r><w:rPr><w:b/><w:color w:val="FFFFFF"/><w:sz w:val="30"/><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/></w:rPr>
-      <w:t>Molde voksenopplæringssenter \u2013 MBO \u2013 Kantinemedarbeider</w:t></w:r></w:p>
-    <w:p><w:r><w:rPr><w:color w:val="BBDDEE"/><w:sz w:val="22"/><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/></w:rPr>
-      <w:t xml:space="preserve">Navn: ________________________________   Dato: ____________   Uke: ________</w:t></w:r></w:p>
-  </w:tc></w:tr>
+  <w:tr>
+    <w:tc>
+      <w:tcPr><w:tcW w:w="4500" w:type="dxa"/>
+        <w:tcMar><w:top w:w="100" w:type="dxa"/><w:bottom w:w="100" w:type="dxa"/>
+          <w:left w:w="0" w:type="dxa"/></w:tcMar>
+      </w:tcPr>
+      <w:p>
+        <w:r><w:rPr><w:sz w:val="20"/><w:color w:val="444444"/>
+          <w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr>
+          <w:t xml:space="preserve">Navn: ___________________________</w:t></w:r>
+      </w:p>
+    </w:tc>
+    <w:tc>
+      <w:tcPr><w:tcW w:w="2263" w:type="dxa"/>
+        <w:tcMar><w:top w:w="100" w:type="dxa"/><w:bottom w:w="100" w:type="dxa"/></w:tcMar>
+      </w:tcPr>
+      <w:p>
+        <w:r><w:rPr><w:sz w:val="20"/><w:color w:val="444444"/>
+          <w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr>
+          <w:t xml:space="preserve">Dato: ________________</w:t></w:r>
+      </w:p>
+    </w:tc>
+    <w:tc>
+      <w:tcPr><w:tcW w:w="2263" w:type="dxa"/>
+        <w:tcMar><w:top w:w="100" w:type="dxa"/><w:bottom w:w="100" w:type="dxa"/>
+          <w:right w:w="0" w:type="dxa"/></w:tcMar>
+      </w:tcPr>
+      <w:p>
+        <w:pPr><w:jc w:val="right"/></w:pPr>
+        <w:r><w:rPr><w:sz w:val="20"/><w:color w:val="444444"/>
+          <w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr>
+          <w:t xml:space="preserve">Uke: ________</w:t></w:r>
+      </w:p>
+    </w:tc>
+  </w:tr>
 </w:tbl>
-<w:p><w:pPr><w:spacing w:after="80"/></w:pPr></w:p>`;
+<w:p><w:pPr><w:spacing w:after="120"/></w:pPr></w:p>`;
 
   const dager = ['MANDAG','TIRSDAG','ONSDAG','TORSDAG','FREDAG'];
-  const dagEmoji = {MANDAG:'🟦',TIRSDAG:'🟩',ONSDAG:'🟨',TORSDAG:'🟧',FREDAG:'🟥'};
+  const dagFarge = {MANDAG:'1F4E79',TIRSDAG:'1D6A5B',ONSDAG:'7B4F00',TORSDAG:'5B2D6E',FREDAG:'8B1A1A'};
+  const dagLysFarge = {MANDAG:'EBF3FB',TIRSDAG:'EAF7F0',ONSDAG:'FFF8E8',TORSDAG:'F5EEF8',FREDAG:'FDECEA'};
+  let aktivDagFarge = NAVY;
+  let aktivDagLys = 'EBF3FB';
 
-  for (const linje of linjer) {
-    const t = linje.trim();
+  // ── Samle linjer i grupper – markdown-tabeller behandles samlet ──
+  let i = 0;
+  while (i < linjer.length) {
+    const t = linjer[i].trim();
 
-    // Skip header already rendered
+    // Skip header lines
     if (!t || t.startsWith('Molde voksen') || t.startsWith('Navn:') ||
-        t.startsWith('TOPPTEKST') || t === 'Tema:') {
+        t.startsWith('TOPPTEKST') || t === 'Tema:' || t.startsWith('Tema: ') ||
+        t.startsWith('═══') || t.startsWith('════')) {
       if (!t) {
-        if (!prevBlank) body += `<w:p><w:pPr><w:spacing w:after="60"/></w:pPr></w:p>`;
+        if (!prevBlank) body += `<w:p><w:pPr><w:spacing w:after="80"/></w:pPr></w:p>`;
         prevBlank = true;
       } else prevBlank = false;
-      continue;
+      i++; continue;
     }
     prevBlank = false;
 
-    // Separators
-    if (t.startsWith('═══')) { body += hrPara(NAVY); continue; }
-    if (t.startsWith('───')) { body += hrPara('CCCCCC'); continue; }
-    if (t.startsWith('════')) { body += hrPara(NAVY); continue; }
+    // ── MARKDOWN-TABELL: samle alle |...|  linjer i én blokk ──────
+    if (t.startsWith('|')) {
+      const tblLinjer = [];
+      while (i < linjer.length && linjer[i].trim().startsWith('|')) {
+        tblLinjer.push(linjer[i].trim());
+        i++;
+      }
+      body += byggWordTabell(tblLinjer, LGREEN, TEAL);
+      continue;
+    }
+
+    // Horisontale linjer
+    if (t.startsWith('───')) { body += skille('D0D0D0'); i++; continue; }
 
     // FASIT
-    if (t === 'FASIT') { inFasit=true; body += shadedPara('📋 FASIT', LIGHTGRAY, NAVY, 26, true); continue; }
+    if (t === 'FASIT') {
+      inFasit = true;
+      body += `<w:p><w:pPr><w:spacing w:before="400" w:after="0"/><w:pBdr>
+        <w:top w:val="single" w:sz="12" w:color="${NAVY}" w:space="4"/>
+      </w:pBdr></w:pPr></w:p>`;
+      body += boksOverskrift('📋 FASIT – SVAR', LGRAY, NAVY, 26);
+      i++; continue;
+    }
 
-    // Day headers
-    if (dager.includes(t)) { body += dagHeader(t, dagEmoji[t]||'📅', NAVY); continue; }
+    // Dagheadere
+    if (dager.includes(t)) {
+      aktivDagFarge = dagFarge[t] || NAVY;
+      aktivDagLys   = dagLysFarge[t] || 'EBF3FB';
+      body += dagHeader(t, aktivDagFarge);
+      i++; continue;
+    }
 
-    // Section headers
-    if (t === 'LÆRINGSMÅL') { body += shadedPara('📌 LÆRINGSMÅL', LIGHTBLUE, NAVY, 24, true); continue; }
-    if (t === 'UKES-ORDLISTE') { body += shadedPara('📝 UKES-ORDLISTE', LIGHTGREEN, NAVY, 24, true); continue; }
+    // LÆRINGSMÅL
+    if (t === 'LÆRINGSMÅL') {
+      body += boksOverskrift('🎯 LÆRINGSMÅL', LBLUE, NAVY, 24);
+      i++; continue;
+    }
 
-    // Muntlig
-    if (t.startsWith('🗣') || t.startsWith('🗣️')) { body += shadedPara(t, LIGHTYELLOW, '7a5c00', 22, true); continue; }
+    // UKES-ORDLISTE
+    if (t === 'UKES-ORDLISTE') {
+      body += boksOverskrift('📝 UKES-ORDLISTE', LGREEN, TEAL, 24);
+      i++; continue;
+    }
 
-    // Lesetekst header
-    if (t.startsWith('📖')) { body += tekstPara(t, {bold:true,size:22,color:TEAL,spaceBefore:160,spaceAfter:60}); continue; }
+    // Muntlig øvelse
+    if (t.startsWith('🗣')) {
+      body += muntligBoks(t, LYELLOW);
+      i++; continue;
+    }
 
-    // Oppgave heading
-    if (/^Oppgave\s+\d+/.test(t)) { body += tekstPara(t, {bold:true,size:22,color:NAVY,spaceBefore:200,spaceAfter:80}); continue; }
+    // Lesetekst-overskrift
+    if (t.startsWith('📖')) {
+      body += lesetekstHeader(t, aktivDagFarge, aktivDagLys);
+      i++; continue;
+    }
+
+    // Oppgave-overskrift
+    if (/^Oppgave\s+\d+/.test(t)) {
+      body += oppgaveHeader(t, aktivDagFarge);
+      i++; continue;
+    }
 
     // Sub-items a)–e)
-    if (/^[a-e]\)/.test(t)) { body += tekstPara(t, {size:22,indent:360,spaceBefore:60,spaceAfter:60,color:inFasit?'444444':'1c1c1c'}); continue; }
+    if (/^[a-e]\)/.test(t)) {
+      const farge = inFasit ? '555555' : '222222';
+      body += subItem(t, farge, inFasit);
+      i++; continue;
+    }
 
     // Bullets
-    if (t.startsWith('•') || t.startsWith('-')) { body += tekstPara(t, {size:22,indent:360,spaceBefore:40,spaceAfter:40}); continue; }
+    if (t.startsWith('•') || (t.startsWith('-') && t.length > 2)) {
+      body += bullet(t);
+      i++; continue;
+    }
 
-    // Default
-    body += tekstPara(t, {size:22,spaceBefore:80,spaceAfter:80,color:inFasit?'555555':'1c1c1c'});
+    // Vanlig avsnitt
+    body += vanligAvsnitt(t, inFasit);
+    i++;
   }
   return body;
 }
 
-function tekstPara(text, o={}) {
-  const {bold=false,size=22,color='1c1c1c',indent=0,spaceBefore=80,spaceAfter=80}=o;
+// ── MARKDOWN-TABELL → WORD-TABELL ────────────────────────
+function byggWordTabell(linjer, headerFyll, headerTekst) {
+  // Parse rader – filtrer bort separator-linjer (|:---|)
+  const rader = linjer
+    .filter(l => !l.replace(/[|\-: ]/g,'').length === 0)
+    .filter(l => !/^\|[\s|:\-]+\|$/.test(l));
+
+  if (rader.length === 0) return '';
+
+  // Parse kolonner fra første rad for å bestemme bredder
+  const parseRad = l => l.split('|')
+    .map(c => c.trim())
+    .filter((c, idx, arr) => idx > 0 && idx < arr.length - 1);
+
+  const kolAntall = parseRad(rader[0]).length;
+  if (kolAntall === 0) return '';
+
+  // Kolonnebredder (DXA) – totalt 9026
+  // For ordliste (3 kol): Ord(2200) | Forklaring(4200) | Notater(2626)
+  // For 2 kol: 3500 | 5526
+  // For 4+ kol: jevnt fordelt
+  let kolBredder;
+  if (kolAntall === 3) {
+    kolBredder = [2000, 4200, 2826];
+  } else if (kolAntall === 2) {
+    kolBredder = [3000, 6026];
+  } else {
+    const bredde = Math.floor(9026 / kolAntall);
+    kolBredder = Array(kolAntall).fill(bredde);
+    kolBredder[kolAntall-1] = 9026 - bredde*(kolAntall-1);
+  }
+
+  const totalBredde = kolBredder.reduce((a,b)=>a+b,0);
+
+  let xml = `<w:p><w:pPr><w:spacing w:before="160" w:after="0"/></w:pPr></w:p>
+<w:tbl>
+<w:tblPr>
+  <w:tblW w:w="${totalBredde}" w:type="dxa"/>
+  <w:tblBorders>
+    <w:top w:val="single" w:sz="4" w:color="B0C4DE" w:space="0"/>
+    <w:bottom w:val="single" w:sz="4" w:color="B0C4DE" w:space="0"/>
+    <w:left w:val="none"/>
+    <w:right w:val="none"/>
+    <w:insideH w:val="single" w:sz="4" w:color="D8E8F0"/>
+    <w:insideV w:val="none"/>
+  </w:tblBorders>
+  <w:tblLook w:val="04A0"/>
+</w:tblPr>
+<w:tblGrid>
+${kolBredder.map(b=>`  <w:gridCol w:w="${b}"/>`).join('\n')}
+</w:tblGrid>`;
+
+  rader.forEach((linje, radIdx) => {
+    const celler = parseRad(linje);
+    if (celler.length === 0) return;
+
+    const erHeader = radIdx === 0;
+    const radFyll  = erHeader ? headerFyll : (radIdx % 2 === 0 ? 'F8FCF9' : 'FFFFFF');
+
+    // Fjern markdown-bold (**tekst**)
+    const rens = t => t.replace(/\*\*([^*]+)\*\*/g, '$1').trim();
+
+    xml += `
+<w:tr>
+  <w:trPr><w:trHeight w:val="480" w:hRule="atLeast"/>${erHeader?'<w:tblHeader/>':''}</w:trPr>`;
+
+    kolBredder.forEach((bredde, kIdx) => {
+      const celleTekst = rens(celler[kIdx] || '');
+      const erNotatKol = kIdx === kolAntall - 1 && kolAntall >= 3;
+
+      // Notat-kolonne: blank linje for skriving
+      const visTekst = erNotatKol && !erHeader ? '' : celleTekst;
+
+      xml += `
+  <w:tc>
+    <w:tcPr>
+      <w:tcW w:w="${bredde}" w:type="dxa"/>
+      <w:shd w:val="clear" w:fill="${erNotatKol&&!erHeader?'FAFFF8':radFyll}" w:color="auto"/>
+      <w:tcMar>
+        <w:top w:w="100" w:type="dxa"/>
+        <w:bottom w:w="100" w:type="dxa"/>
+        <w:left w:w="160" w:type="dxa"/>
+        <w:right w:w="160" w:type="dxa"/>
+      </w:tcMar>
+    </w:tcPr>
+    <w:p>
+      <w:pPr><w:spacing w:after="0"/></w:pPr>
+      <w:r><w:rPr>
+        ${erHeader?`<w:b/><w:color w:val="${headerTekst}"/>`:`<w:color w:val="${erNotatKol?'AAAAAA':'333333'}"/>`}
+        <w:sz w:val="${erHeader?22:22}"/><w:szCs w:val="${erHeader?22:22}"/>
+        <w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/>
+      </w:rPr>
+      <w:t xml:space="preserve">${esc(visTekst)}</w:t></w:r>
+    </w:p>
+  </w:tc>`;
+    });
+
+    xml += `
+</w:tr>`;
+  });
+
+  // Legg til 2 ekstra tomme rader for skriving (notatkolonne)
+  if (kolAntall >= 2) {
+    for (let ekstra = 0; ekstra < 2; ekstra++) {
+      xml += `
+<w:tr>
+  <w:trPr><w:trHeight w:val="600" w:hRule="atLeast"/></w:trPr>`;
+      kolBredder.forEach((bredde, kIdx) => {
+        const erNotat = kIdx === kolAntall - 1;
+        xml += `
+  <w:tc>
+    <w:tcPr>
+      <w:tcW w:w="${bredde}" w:type="dxa"/>
+      <w:shd w:val="clear" w:fill="${erNotat?'FAFFF8':'FFFFFF'}" w:color="auto"/>
+      <w:tcMar>
+        <w:top w:w="100" w:type="dxa"/>
+        <w:bottom w:w="100" w:type="dxa"/>
+        <w:left w:w="160" w:type="dxa"/>
+        <w:right w:w="160" w:type="dxa"/>
+      </w:tcMar>
+    </w:tcPr>
+    <w:p><w:pPr><w:spacing w:after="0"/></w:pPr>
+      <w:r><w:rPr><w:sz w:val="22"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr>
+      <w:t></w:t></w:r>
+    </w:p>
+  </w:tc>`;
+      });
+      xml += `
+</w:tr>`;
+    }
+  }
+
+  xml += `
+</w:tbl>
+<w:p><w:pPr><w:spacing w:after="160"/></w:pPr></w:p>`;
+  return xml;
+}
+
+// ── HJELPEFUNKSJONER FOR WORD-DESIGN ────────────────────
+
+function boksOverskrift(tekst, fyllFarge, tekstFarge, sz) {
   return `<w:p>
-  <w:pPr><w:spacing w:before="${spaceBefore}" w:after="${spaceAfter}"/>${indent?`<w:ind w:left="${indent}"/>`:''}  </w:pPr>
-  <w:r><w:rPr>${bold?'<w:b/>':''}<w:color w:val="${color}"/><w:sz w:val="${size}"/><w:szCs w:val="${size}"/>
-    <w:rFonts w:ascii="Arial" w:hAnsi="Arial"/></w:rPr>
-    <w:t xml:space="preserve">${esc(text)}</w:t></w:r></w:p>`;
+  <w:pPr>
+    <w:shd w:val=clear w:fill=${fyllFarge} w:color=auto/>
+    <w:spacing w:before=200 w:after=60/>
+    <w:ind w:left=160 w:right=160/>
+    <w:pBdr>
+      <w:left w:val=single w:sz=12 w:color=${tekstFarge} w:space=4/>
+    </w:pBdr>
+  </w:pPr>
+  <w:r><w:rPr><w:b/><w:color w:val=${tekstFarge}/><w:sz w:val=${sz}/><w:szCs w:val=${sz}/>
+    <w:rFonts w:ascii=Calibri w:hAnsi=Calibri/></w:rPr>
+    <w:t xml:space=preserve>${esc(tekst)}</w:t></w:r></w:p>`;
 }
 
-function shadedPara(text, fill, color, size=24, bold=false) {
+function dagHeader(dag, farge) {
+  const dagNo = {MANDAG:'Mandag',TIRSDAG:'Tirsdag',ONSDAG:'Onsdag',TORSDAG:'Torsdag',FREDAG:'Fredag'};
+  const dagEmoji = {MANDAG:'📅',TIRSDAG:'📅',ONSDAG:'📅',TORSDAG:'📅',FREDAG:'📅'};
+  const visnavn = dagNo[dag] || dag;
+  return `
+<w:p><w:pPr><w:spacing w:before=360 w:after=0/></w:pPr></w:p>
+<w:tbl>
+  <w:tblPr>
+    <w:tblW w:w=9026 w:type=dxa/>
+    <w:tblBorders>
+      <w:top w:val=none/><w:bottom w:val=none/>
+      <w:left w:val=none/><w:right w:val=none/>
+    </w:tblBorders>
+    <w:shd w:val=clear w:fill=${farge} w:color=auto/>
+  </w:tblPr>
+  <w:tr>
+    <w:tc>
+      <w:tcPr>
+        <w:tcW w:w=9026 w:type=dxa/>
+        <w:shd w:val=clear w:fill=${farge} w:color=auto/>
+        <w:tcMar>
+          <w:top w:w=140 w:type=dxa/>
+          <w:bottom w:w=140 w:type=dxa/>
+          <w:left w:w=240 w:type=dxa/>
+          <w:right w:w=240 w:type=dxa/>
+        </w:tcMar>
+      </w:tcPr>
+      <w:p>
+        <w:pPr><w:spacing w:after=0/></w:pPr>
+        <w:r><w:rPr><w:b/><w:color w:val=FFFFFF/><w:sz w:val=32/><w:szCs w:val=32/>
+          <w:rFonts w:ascii=Calibri w:hAnsi=Calibri/></w:rPr>
+          <w:t xml:space=preserve>${visnavn}</w:t></w:r>
+      </w:p>
+    </w:tc>
+  </w:tr>
+</w:tbl>
+<w:p><w:pPr><w:spacing w:before=80 w:after=0/></w:pPr></w:p>`;
+}
+
+function lesetekstHeader(tekst, dagFarge, dagLys) {
   return `<w:p>
-  <w:pPr><w:shd w:val="clear" w:fill="${fill}" w:color="auto"/>
-    <w:spacing w:before="100" w:after="100"/><w:ind w:left="120" w:right="120"/></w:pPr>
-  <w:r><w:rPr>${bold?'<w:b/>':''}<w:color w:val="${color}"/><w:sz w:val="${size}"/><w:szCs w:val="${size}"/>
-    <w:rFonts w:ascii="Arial" w:hAnsi="Arial"/></w:rPr>
-    <w:t xml:space="preserve">${esc(text)}</w:t></w:r></w:p>`;
+  <w:pPr>
+    <w:shd w:val=clear w:fill=${dagLys} w:color=auto/>
+    <w:spacing w:before=180 w:after=60/>
+    <w:ind w:left=160 w:right=160/>
+    <w:pBdr>
+      <w:left w:val=single w:sz=18 w:color=${dagFarge} w:space=4/>
+    </w:pBdr>
+  </w:pPr>
+  <w:r><w:rPr><w:b/><w:color w:val=${dagFarge}/><w:sz w:val=22/><w:szCs w:val=22/>
+    <w:rFonts w:ascii=Calibri w:hAnsi=Calibri/></w:rPr>
+    <w:t xml:space=preserve>${esc(tekst)}</w:t></w:r></w:p>`;
 }
 
-function hrPara(color) {
-  return `<w:p><w:pPr><w:pBdr><w:bottom w:val="single" w:sz="6" w:color="${color}" w:space="4"/></w:pBdr>
-    <w:spacing w:before="80" w:after="80"/></w:pPr></w:p>`;
+function oppgaveHeader(tekst, dagFarge) {
+  return `
+<w:p><w:pPr><w:spacing w:before=200 w:after=0/></w:pPr></w:p>
+<w:p>
+  <w:pPr>
+    <w:spacing w:before=0 w:after=80/>
+    <w:pBdr>
+      <w:bottom w:val=single w:sz=4 w:color=${dagFarge} w:space=4/>
+    </w:pBdr>
+  </w:pPr>
+  <w:r><w:rPr><w:b/><w:color w:val=${dagFarge}/><w:sz w:val=22/><w:szCs w:val=22/>
+    <w:rFonts w:ascii=Calibri w:hAnsi=Calibri/></w:rPr>
+    <w:t xml:space=preserve>${esc(tekst)}</w:t></w:r></w:p>`;
 }
 
-function dagHeader(dag, emoji, navy) {
-  return `<w:p><w:pPr><w:spacing w:before="280" w:after="0"/></w:pPr></w:p>
-<w:p><w:pPr><w:shd w:val="clear" w:fill="${navy}" w:color="auto"/>
-  <w:spacing w:before="120" w:after="120"/><w:ind w:left="120"/></w:pPr>
-  <w:r><w:rPr><w:b/><w:color w:val="FFFFFF"/><w:sz w:val="28"/><w:szCs w:val="28"/>
-    <w:rFonts w:ascii="Arial" w:hAnsi="Arial"/></w:rPr>
-    <w:t xml:space="preserve">${emoji} ${dag}</w:t></w:r></w:p>
-<w:p><w:pPr><w:spacing w:before="60" w:after="0"/></w:pPr></w:p>`;
+function subItem(tekst, farge, erFasit) {
+  const bg = erFasit ? 'F9F9F9' : 'FFFFFF';
+  return `<w:p>
+  <w:pPr>
+    <w:spacing w:before=60 w:after=60/>
+    <w:ind w:left=480 w:hanging=240/>
+    <w:shd w:val=clear w:fill=${bg} w:color=auto/>
+  </w:pPr>
+  <w:r><w:rPr><w:color w:val=${farge}/><w:sz w:val=22/><w:szCs w:val=22/>
+    <w:rFonts w:ascii=Calibri w:hAnsi=Calibri/></w:rPr>
+    <w:t xml:space=preserve>${esc(tekst)}</w:t></w:r></w:p>`;
 }
 
-// ─── ZIP BUILDER ─────────────────────────────────────────
+function bullet(tekst) {
+  return `<w:p>
+  <w:pPr>
+    <w:spacing w:before=40 w:after=40/>
+    <w:ind w:left=480 w:hanging=240/>
+  </w:pPr>
+  <w:r><w:rPr><w:color w:val=333333/><w:sz w:val=22/><w:szCs w:val=22/>
+    <w:rFonts w:ascii=Calibri w:hAnsi=Calibri/></w:rPr>
+    <w:t xml:space=preserve>${esc(tekst)}</w:t></w:r></w:p>`;
+}
+
+function vanligAvsnitt(tekst, erFasit) {
+  const farge = erFasit ? '555555' : '1A1A1A';
+  const spacing = erFasit ? '60' : '100';
+  return `<w:p>
+  <w:pPr>
+    <w:spacing w:before=${spacing} w:after=${spacing} w:line=276 w:lineRule=auto/>
+  </w:pPr>
+  <w:r><w:rPr><w:color w:val=${farge}/><w:sz w:val=22/><w:szCs w:val=22/>
+    <w:rFonts w:ascii=Calibri w:hAnsi=Calibri/></w:rPr>
+    <w:t xml:space=preserve>${esc(tekst)}</w:t></w:r></w:p>`;
+}
+
+function muntligBoks(tekst, fyllFarge) {
+  return `
+<w:p><w:pPr><w:spacing w:before=160 w:after=0/></w:pPr></w:p>
+<w:p>
+  <w:pPr>
+    <w:shd w:val=clear w:fill=${fyllFarge} w:color=auto/>
+    <w:spacing w:before=120 w:after=120/>
+    <w:ind w:left=200 w:right=200/>
+    <w:pBdr>
+      <w:top w:val=single w:sz=6 w:color=E8A030 w:space=4/>
+      <w:bottom w:val=single w:sz=6 w:color=E8A030 w:space=4/>
+      <w:left w:val=single w:sz=18 w:color=E8A030 w:space=6/>
+      <w:right w:val=single w:sz=6 w:color=E8A030 w:space=4/>
+    </w:pBdr>
+  </w:pPr>
+  <w:r><w:rPr><w:b/><w:color w:val=7A5C00/><w:sz w:val=22/><w:szCs w:val=22/>
+    <w:rFonts w:ascii=Calibri w:hAnsi=Calibri/></w:rPr>
+    <w:t xml:space=preserve>${esc(tekst)}</w:t></w:r></w:p>`;
+}
+
+function skille(farge) {
+  return `<w:p><w:pPr><w:pBdr>
+    <w:bottom w:val=single w:sz=4 w:color=${farge} w:space=4/>
+  </w:pBdr><w:spacing w:before=60 w:after=60/></w:pPr></w:p>`;
+}
+
 function byggDocxZip(bodyXml) {
   const docXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
@@ -1018,7 +1578,7 @@ ${bodyXml}
     '[Content_Types].xml': `<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>`,
     '_rels/.rels': `<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>`,
     'word/document.xml': docXml,
-    'word/styles.xml': `<?xml version="1.0" encoding="UTF-8"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/><w:sz w:val="22"/></w:rPr></w:rPrDefault></w:docDefaults></w:styles>`,
+    'word/styles.xml': `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:sz w:val="22"/><w:szCs w:val="22"/><w:lang w:val="nb-NO"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="100" w:line="276" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults></w:styles>`,
     'word/_rels/document.xml.rels': `<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`,
   };
   return lagZip(files);
