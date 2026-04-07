@@ -2,5 +2,7 @@
   "name": "kantineportal",
   "version": "1.0.0",
   "description": "Kantinemedarbeider – ukesoppgaver for MBO, Molde voksenopplæringssenter",
-  "engines": { "node": "18.x" }
+  "engines": {
+    "node": "20.x"
+  }
 }
