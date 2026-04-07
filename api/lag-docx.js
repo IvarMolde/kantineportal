@@ -247,31 +247,31 @@ function ordlisteTabell(ord) {
     tableHeader: true,
     children: [
       new TableCell({
-        width: { size: 600, type: WidthType.DXA },
+        width: { size: 500, type: WidthType.DXA },
         shading: { type: ShadingType.CLEAR, fill: C.LGREEN },
         margins: cMarg,
         borders: { top: borderGreen, bottom: borderLight, left: borderNone, right: borderNone },
         children: [new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 0 }, children: [new TextRun({ text: 'Nr.', font: 'Calibri', size: 20, bold: true, color: C.TEAL })] })],
       }),
       new TableCell({
-        width: { size: 4826, type: WidthType.DXA },
+        width: { size: 4726, type: WidthType.DXA },
         shading: { type: ShadingType.CLEAR, fill: C.LGREEN },
         margins: cMarg,
         borders: { top: borderGreen, bottom: borderLight, left: borderNone, right: borderNone },
-        children: [new Paragraph({ spacing: { after: 0 }, children: [new TextRun({ text: 'Norsk ord og forklaring', font: 'Calibri', size: 20, bold: true, color: C.TEAL })] })],
+        children: [new Paragraph({ spacing: { after: 0 }, children: [new TextRun({ text: 'Norsk ord / uttrykk / setning', font: 'Calibri', size: 20, bold: true, color: C.TEAL })] })],
       }),
       new TableCell({
-        width: { size: 3600, type: WidthType.DXA },
+        width: { size: 3800, type: WidthType.DXA },
         shading: { type: ShadingType.CLEAR, fill: C.LGREEN },
         margins: cMarg,
         borders: { top: borderGreen, bottom: borderLight, left: borderNone, right: borderNone },
-        children: [new Paragraph({ spacing: { after: 0 }, children: [new TextRun({ text: 'Oversettelse (mitt språk)', font: 'Calibri', size: 20, bold: true, color: C.TEAL })] })],
+        children: [new Paragraph({ spacing: { after: 0 }, children: [new TextRun({ text: 'Oversettelse til mitt morsmål', font: 'Calibri', size: 20, bold: true, color: C.TEAL })] })],
       }),
     ],
   });
 
   const dataRows = [];
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 15; i++) {
     const radFyll = i % 2 === 0 ? C.WHITE : C.LGRAY2;
     const ordTekst = ord && ord[i] ? rens(ord[i]) : '';
     dataRows.push(new TableRow({
@@ -286,7 +286,7 @@ function ordlisteTabell(ord) {
           children: [new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 0 }, children: [new TextRun({ text: String(i + 1), font: 'Calibri', size: 20, bold: true, color: C.TEAL })] })],
         }),
         new TableCell({
-          width: { size: 4826, type: WidthType.DXA },
+          width: { size: 4726, type: WidthType.DXA },
           shading: { type: ShadingType.CLEAR, fill: radFyll },
           margins: cMarg,
           verticalAlign: VerticalAlign.CENTER,
@@ -294,7 +294,7 @@ function ordlisteTabell(ord) {
           children: [new Paragraph({ spacing: { after: 0 }, children: [new TextRun({ text: ordTekst, font: 'Calibri', size: 22, color: C.DARK })] })],
         }),
         new TableCell({
-          width: { size: 3600, type: WidthType.DXA },
+          width: { size: 3800, type: WidthType.DXA },
           shading: { type: ShadingType.CLEAR, fill: 'FAFFF8' },
           margins: cMarg,
           borders: { top: borderLight, bottom: borderLight, left: borderNone, right: borderNone },
@@ -306,7 +306,7 @@ function ordlisteTabell(ord) {
 
   return new Table({
     width: { size: 9026, type: WidthType.DXA },
-    columnWidths: [600, 4826, 3600],
+    columnWidths: [500, 4726, 3800],
     rows: [headerRow, ...dataRows],
   });
 }
