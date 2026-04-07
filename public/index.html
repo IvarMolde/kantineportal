@@ -595,22 +595,23 @@ async function loggInn(e) {
 
   // Verifiser passord mot backend
   try {
-    const res = await fetch('/api/generer', {
+    const res = await fetch('/api/ping', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ passord, prompt: '__ping__' })
+      body: JSON.stringify({ passord })
     });
-    // 400 = passord OK men tom prompt er akseptabelt for verifisering
-    // 401 = feil passord
+    const data = await res.json();
     if (res.status === 401) {
-      const data = await res.json();
       feilEl.textContent = data.feil || 'Feil passord.';
       feilEl.classList.add('vis');
-    } else {
+    } else if (res.ok) {
       // Passord OK
       passordSession = passord;
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('app').style.display = 'block';
+    } else {
+      feilEl.textContent = data.feil || 'Serverfeil. Prøv igjen.';
+      feilEl.classList.add('vis');
     }
   } catch (err) {
     feilEl.textContent = 'Kunne ikke koble til serveren. Prøv igjen.';
