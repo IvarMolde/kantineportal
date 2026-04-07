@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kantinemedarbeider – MBO Molde</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f2744;
+    --navy-mid: #1a3a5c;
+    --teal: #1a7a6e;
+    --teal-light: #2aad9b;
+    --amber: #e8a030;
+    --cream: #f7f3ee;
+    --warm-white: #fdfaf6;
+    --text: #1c1c1c;
+    --text-muted: #6b7280;
+    --border: #e2ddd8;
+    --card-bg: #ffffff;
+    --shadow: 0 2px 20px rgba(15,39,68,0.08);
+    --shadow-lg: 0 8px 40px rgba(15,39,68,0.14);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--navy);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    height: 68px;
+  }
+  .header-icon {
+    width: 40px; height: 40px;
+    background: var(--teal);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .header-titles { flex: 1; }
+  .header-titles h1 {
+    font-family: 'DM Serif Display', serif;
+    color: #ffffff;
+    font-size: 1.25rem;
+    line-height: 1.2;
+  }
+  .header-titles p {
+    color: rgba(255,255,255,0.5);
+    font-size: 0.72rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .api-status {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.75rem; color: rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 6px 12px; border-radius: 20px;
+  }
+  .status-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 6px #22c55e;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* MAIN LAYOUT */
+  .layout {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 32px 80px;
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+
+  /* SIDEBAR */
+  .sidebar { display: flex; flex-direction: column; gap: 20px; position: sticky; top: 96px; }
+
+  .panel {
+    background: var(--card-bg);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .panel-header {
+    background: var(--navy);
+    padding: 14px 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .panel-header span { font-size: 16px; }
+  .panel-header h2 {
+    font-family: 'DM Serif Display', serif;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 400;
+  }
+  .panel-body { padding: 20px; }
+
+  /* TEMA GRID */
+  .tema-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .tema-btn {
+    width: 100%;
+    text-align: left;
+    padding: 10px 14px;
+    border: 1.5px solid transparent;
+    background: var(--cream);
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text);
+    transition: all 0.18s ease;
+    display: flex; align-items: center; gap: 10px;
+    line-height: 1.3;
+  }
+  .tema-btn:hover { background: #e8f4f2; border-color: var(--teal-light); color: var(--teal); }
+  .tema-btn.active { background: var(--teal); border-color: var(--teal); color: #fff; }
+  .tema-num {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    min-width: 20px;
+    font-variant-numeric: tabular-nums;
+  }
+  .tema-btn.active .tema-num { color: rgba(255,255,255,0.7); }
+  .tema-btn:hover:not(.active) .tema-num { color: var(--teal); }
+
+  /* CEFR SELECTOR */
+  .cefr-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .cefr-btn {
+    padding: 10px 6px;
+    border: 2px solid var(--border);
+    background: var(--cream);
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    text-align: center;
+    transition: all 0.18s ease;
+  }
+  .cefr-label {
+    display: block;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: 'DM Serif Display', serif;
+    color: var(--navy);
+  }
+  .cefr-desc {
+    display: block;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .cefr-btn:hover { border-color: var(--teal-light); background: #e8f4f2; }
+  .cefr-btn.selected {
+    border-color: var(--teal);
+    background: var(--teal);
+  }
+  .cefr-btn.selected .cefr-label,
+  .cefr-btn.selected .cefr-desc { color: #fff; }
+
+  /* GENERATE BTN */
+  .generate-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--amber);
+    color: var(--navy);
+    border: none;
+    border-radius: 12px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    box-shadow: 0 4px 16px rgba(232,160,48,0.35);
+  }
+  .generate-btn:hover:not(:disabled) {
+    background: #f0b040;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(232,160,48,0.45);
+  }
+  .generate-btn:disabled {
+    opacity: 0.5; cursor: not-allowed; transform: none;
+  }
+
+  /* MAIN CONTENT */
+  .main-content { display: flex; flex-direction: column; gap: 24px; }
+
+  /* HERO */
+  .hero-card {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, #1a4a6e 100%);
+    border-radius: 20px;
+    padding: 36px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+  }
+  .hero-card::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(26,122,110,0.3) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero-card::after {
+    content: '🍽️';
+    position: absolute;
+    right: 36px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 80px;
+    opacity: 0.12;
+  }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(42,173,155,0.25);
+    color: var(--teal-light);
+    border: 1px solid rgba(42,173,155,0.4);
+    padding: 4px 12px; border-radius: 20px;
+    font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .hero-card h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.9rem;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .hero-card p {
+    color: rgba(255,255,255,0.65);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    max-width: 520px;
+  }
+
+  /* WEEK PREVIEW */
+  .week-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .week-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .week-header h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    color: var(--navy);
+  }
+  .badge {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 0.72rem; font-weight: 500;
+  }
+  .days-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    border-top: none;
+  }
+  .day-col {
+    padding: 16px 14px;
+    border-right: 1px solid var(--border);
+  }
+  .day-col:last-child { border-right: none; }
+  .day-name {
+    font-size: 0.72rem; font-weight: 600;
+    color: var(--navy); text-transform: uppercase;
+    letter-spacing: 0.05em; margin-bottom: 10px;
+  }
+  .day-item {
+    background: var(--cream);
+    border-radius: 6px;
+    padding: 7px 9px;
+    margin-bottom: 6px;
+    font-size: 0.73rem;
+    color: var(--text-muted);
+    line-height: 1.3;
+    border-left: 3px solid var(--border);
+  }
+  .day-item.text { border-left-color: var(--teal-light); }
+  .day-item.gram { border-left-color: var(--amber); }
+  .day-item.vocab { border-left-color: #9b6dff; }
+  .day-item.oral { border-left-color: #ef6a6a; }
+  .day-item span { font-weight: 600; display: block; color: var(--text); font-size: 0.71rem; }
+
+  /* OUTPUT AREA */
+  .output-area {
+    background: var(--card-bg);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    min-height: 300px;
+    display: flex; flex-direction: column;
+  }
+  .output-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .output-header h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.05rem; color: var(--navy);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .output-body {
+    padding: 24px;
+    flex: 1;
+    display: flex; flex-direction: column;
+  }
+
+  /* IDLE STATE */
+  .idle-state {
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; gap: 12px;
+    padding: 40px;
+  }
+  .idle-icon { font-size: 48px; opacity: 0.25; }
+  .idle-state h4 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem; color: var(--text-muted);
+  }
+  .idle-state p { font-size: 0.85rem; color: var(--text-muted); max-width: 320px; line-height: 1.6; }
+
+  /* LOADING */
+  .loading-state {
+    flex: 1;
+    display: none; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 20px; padding: 40px;
+  }
+  .loading-state.visible { display: flex; }
+  .spinner {
+    width: 48px; height: 48px;
+    border: 3px solid var(--border);
+    border-top-color: var(--teal);
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text {
+    text-align: center;
+  }
+  .loading-text h4 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem; color: var(--navy);
+  }
+  .loading-step {
+    font-size: 0.82rem; color: var(--text-muted);
+    margin-top: 6px;
+    transition: all 0.3s ease;
+  }
+  .progress-bar {
+    width: 280px; height: 4px;
+    background: var(--border); border-radius: 2px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; background: var(--teal);
+    border-radius: 2px;
+    transition: width 0.5s ease;
+    width: 0%;
+  }
+
+  /* RESULT STATE */
+  .result-state { display: none; flex-direction: column; gap: 16px; }
+  .result-state.visible { display: flex; }
+
+  .result-info {
+    background: linear-gradient(135deg, #e8f7f5, #d4f0eb);
+    border: 1px solid #a7ddd7;
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .result-check {
+    width: 40px; height: 40px; flex-shrink: 0;
+    background: var(--teal);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 18px;
+  }
+  .result-info h4 { font-size: 0.95rem; font-weight: 600; color: var(--teal); }
+  .result-info p { font-size: 0.8rem; color: #4a8e88; margin-top: 2px; }
+
+  .download-btn {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 20px;
+    background: var(--navy);
+    color: white;
+    border: none; border-radius: 10px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem; font-weight: 500;
+    text-decoration: none;
+    transition: background 0.18s;
+  }
+  .download-btn:hover { background: var(--navy-mid); }
+  .download-btn .dl-icon { font-size: 18px; }
+  .download-btn .dl-info { text-align: left; }
+  .download-btn .dl-name { font-weight: 600; }
+  .download-btn .dl-size { font-size: 0.75rem; opacity: 0.6; }
+
+  .preview-box {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    font-size: 0.82rem;
+    line-height: 1.8;
+    color: var(--text);
+    max-height: 320px;
+    overflow-y: auto;
+    font-family: 'DM Mono', 'Courier New', monospace;
+    white-space: pre-wrap;
+  }
+
+  .error-state {
+    display: none;
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    border-radius: 10px;
+    padding: 16px;
+    color: #b91c1c;
+    font-size: 0.85rem;
+  }
+  .error-state.visible { display: block; }
+
+  /* API KEY INPUT */
+  .api-input-wrap {
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .api-input-wrap label {
+    font-size: 0.75rem; font-weight: 600;
+    color: rgba(255,255,255,0.6);
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .api-input {
+    padding: 9px 12px;
+    border: 1.5px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.07);
+    color: white;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    outline: none;
+    transition: border-color 0.18s;
+    width: 100%;
+  }
+  .api-input::placeholder { color: rgba(255,255,255,0.3); }
+  .api-input:focus { border-color: var(--teal-light); }
+
+  /* Legend */
+  .legend {
+    display: flex; gap: 14px; flex-wrap: wrap; padding: 14px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--cream);
+    border-radius: 0 0 16px 16px;
+  }
+  .leg-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.72rem; color: var(--text-muted);
+  }
+  .leg-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { position: static; }
+    .days-grid { grid-template-columns: repeat(2,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-icon">🍴</div>
+    <div class="header-titles">
+      <h1>Kantinemedarbeider – Ukesoppgaver</h1>
+      <p>Molde voksenopplæringssenter · MBO · NAV Molde</p>
+    </div>
+    <div class="api-status">
+      <div class="status-dot"></div>
+      <span>Gemini API</span>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- API KEY -->
+    <div class="panel">
+      <div class="panel-header">
+        <span>🔑</span>
+        <h2>API-nøkkel</h2>
+      </div>
+      <div class="panel-body">
+        <div class="api-input-wrap" style="--c:#1a3a5c">
+          <input type="password" class="api-input" id="apiKey"
+            placeholder="AIza..." autocomplete="off"
+            style="border-color:rgba(15,39,68,0.2);background:#f7f3ee;color:#1c1c1c;">
+          <small style="font-size:0.72rem;color:#6b7280;margin-top:4px;">
+            Google Gemini API-nøkkel. Lagres kun i nettleseren.
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEMA -->
+    <div class="panel">
+      <div class="panel-header">
+        <span>📋</span>
+        <h2>Velg tema</h2>
+      </div>
+      <div class="panel-body" style="padding:12px">
+        <div class="tema-grid" id="temaGrid"></div>
+      </div>
+    </div>
+
+    <!-- CEFR -->
+    <div class="panel">
+      <div class="panel-header">
+        <span>🎯</span>
+        <h2>CEFR-nivå</h2>
+      </div>
+      <div class="panel-body">
+        <div class="cefr-grid" id="cefrGrid"></div>
+        <p style="font-size:0.72rem;color:var(--text-muted);margin-top:10px;">
+          Velg ett eller flere nivåer. Én fil per nivå.
+        </p>
+      </div>
+    </div>
+
+    <!-- GENERATE -->
+    <button class="generate-btn" id="generateBtn" onclick="generate()">
+      <span>⬇️</span>
+      <span>Generer ukesark</span>
+    </button>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <div class="hero-card">
+      <div class="hero-tag">🍽️ Faget kantinemedarbeider</div>
+      <h2>Én uke · Ett tema · Alle dager</h2>
+      <p>Velg et tema og CEFR-nivå. Portalen genererer et komplett ukesark med nye lesetekster hver dag (mandag–fredag), leseforståelsesoppgaver, grammatikk (a–e) og ordforråd – tilpasset CEFR-nivået.</p>
+    </div>
+
+    <!-- WEEK PREVIEW -->
+    <div class="week-card" id="weekPreview">
+      <div class="week-header">
+        <h3 id="weekTitle">Ukesstruktur</h3>
+        <span class="badge" id="weekBadge">Velg tema</span>
+      </div>
+      <div class="days-grid">
+        <div class="day-col">
+          <div class="day-name">Man</div>
+          <div class="day-item text"><span>📖 Lesetekst 1</span>Om temaet, enkel intro</div>
+          <div class="day-item text"><span>📖 Lesetekst 2</span>Eksempel fra arbeidsdag</div>
+          <div class="day-item gram"><span>✏️ Gram. 1a–e</span>Fokus på presens</div>
+          <div class="day-item vocab"><span>📝 Ordliste</span>8–12 nøkkelord</div>
+        </div>
+        <div class="day-col">
+          <div class="day-name">Tir</div>
+          <div class="day-item text"><span>📖 Lesetekst 3</span>Dialog/situasjon</div>
+          <div class="day-item text"><span>📖 Lesetekst 4</span>Rutiner og prosedyrer</div>
+          <div class="day-item gram"><span>✏️ Gram. 2a–e</span>V2-regelen</div>
+          <div class="day-item oral"><span>🗣️ Muntlig</span>Parmøvelse</div>
+        </div>
+        <div class="day-col">
+          <div class="day-name">Ons</div>
+          <div class="day-item text"><span>📖 Lesetekst 5</span>Instruksjon/skilt</div>
+          <div class="day-item text"><span>📖 Lesetekst 6</span>Fra praksis</div>
+          <div class="day-item gram"><span>✏️ Gram. 3a–e</span>Adjektiv/ord</div>
+          <div class="day-item vocab"><span>📝 Setningstrening</span>Fyll inn</div>
+        </div>
+        <div class="day-col">
+          <div class="day-name">Tor</div>
+          <div class="day-item text"><span>📖 Lesetekst 7</span>Regler/retningslinjer</div>
+          <div class="day-item text"><span>📖 Lesetekst 8</span>Forbruker/gjest</div>
+          <div class="day-item gram"><span>✏️ Gram. 4a–e</span>Preposisjoner</div>
+          <div class="day-item oral"><span>🗣️ Rollespill</span>Med kollega</div>
+        </div>
+        <div class="day-col">
+          <div class="day-name">Fre</div>
+          <div class="day-item text"><span>📖 Lesetekst 9</span>Oppsummering</div>
+          <div class="day-item text"><span>📖 Lesetekst 10</span>Refleksjon/mening</div>
+          <div class="day-item gram"><span>✏️ Gram. 5a–e</span>Fri skriving</div>
+          <div class="day-item vocab"><span>📝 Ukes-fasit</span>Alle svar</div>
+        </div>
+      </div>
+      <div class="legend">
+        <div class="leg-item"><div class="leg-dot" style="background:var(--teal-light)"></div>Lesetekster</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--amber)"></div>Grammatikk</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#9b6dff"></div>Ordforråd</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#ef6a6a"></div>Muntlig</div>
+      </div>
+    </div>
+
+    <!-- OUTPUT -->
+    <div class="output-area">
+      <div class="output-header">
+        <h3>
+          <span>📄</span>
+          Generert dokument
+        </h3>
+        <span class="badge" id="outputBadge">Klar til bruk</span>
+      </div>
+      <div class="output-body">
+
+        <div class="idle-state" id="idleState">
+          <div class="idle-icon">📄</div>
+          <h4>Ingen fil generert ennå</h4>
+          <p>Velg et tema og CEFR-nivå i sidepanelet, og trykk «Generer ukesark» for å lage et komplett Word-dokument.</p>
+        </div>
+
+        <div class="loading-state" id="loadingState">
+          <div class="spinner"></div>
+          <div class="loading-text">
+            <h4>Genererer ukesark…</h4>
+            <div class="loading-step" id="loadingStep">Starter Gemini API…</div>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+
+        <div class="result-state" id="resultState">
+          <div class="result-info">
+            <div class="result-check">✓</div>
+            <div>
+              <h4 id="resultTitle">Dokument klart!</h4>
+              <p id="resultDesc">Last ned Word-filen under.</p>
+            </div>
+          </div>
+          <a href="#" class="download-btn" id="downloadBtn" download>
+            <span class="dl-icon">📥</span>
+            <div class="dl-info">
+              <div class="dl-name" id="dlName">kantinemedarbeider_A2.docx</div>
+              <div class="dl-size">Word-dokument · Klar til bruk</div>
+            </div>
+          </a>
+          <div class="preview-box" id="previewBox"></div>
+        </div>
+
+        <div class="error-state" id="errorState"></div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const TEMAER = [
+  { id: 1,  navn: "HMS og sikkerhet på kjøkkenet" },
+  { id: 2,  navn: "Kundebehandling og service" },
+  { id: 3,  navn: "Navn på mat og matretter" },
+  { id: 4,  navn: "Menyer og menyplanlegging" },
+  { id: 5,  navn: "Matsikkerhet og hygiene" },
+  { id: 6,  navn: "Matsvinn og bærekraft" },
+  { id: 7,  navn: "Økonomi og innkjøp" },
+  { id: 8,  navn: "Allergener og spesialmat" },
+  { id: 9,  navn: "Kantine og arbeidsrutiner" },
+  { id: 10, navn: "Rydding, vasking og renhold" },
+  { id: 11, navn: "Kollegaer og teamarbeid" },
+  { id: 12, navn: "Kommunikasjon og konflikthåndtering" },
+  { id: 13, navn: "Bruk av maskiner og utstyr" },
+  { id: 14, navn: "Norsk matkultur og tradisjoner" },
+  { id: 15, navn: "Kosthold, ernæring og helse" },
+  { id: 16, navn: "Vakt, arbeidsplan og turnus" },
+  { id: 17, navn: "Digitale verktøy i kantinen" },
+  { id: 18, navn: "Rettigheter og plikter som ansatt" },
+  { id: 19, navn: "Varelevering og lagerhold" },
+  { id: 20, navn: "Jobbintervju og yrkespresentasjon" },
+];
+
+const CEFR = [
+  { id: 'A1', desc: 'Nybegynner' },
+  { id: 'A2', desc: 'Grunnleggende' },
+  { id: 'B1', desc: 'Mellomnivå' },
+  { id: 'B2', desc: 'Videregående' },
+];
+
+let valgtTema = null;
+let valgteCEFR = [];
+
+// Build tema buttons
+const temaGrid = document.getElementById('temaGrid');
+TEMAER.forEach(t => {
+  const btn = document.createElement('button');
+  btn.className = 'tema-btn';
+  btn.dataset.id = t.id;
+  btn.innerHTML = `<span class="tema-num">${String(t.id).padStart(2,'0')}</span>${t.navn}`;
+  btn.onclick = () => {
+    document.querySelectorAll('.tema-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    valgtTema = t;
+    document.getElementById('weekTitle').textContent = t.navn;
+    document.getElementById('weekBadge').textContent = `Tema ${t.id}`;
+  };
+  temaGrid.appendChild(btn);
+});
+
+// Build CEFR buttons
+const cefrGrid = document.getElementById('cefrGrid');
+CEFR.forEach(c => {
+  const btn = document.createElement('button');
+  btn.className = 'cefr-btn';
+  btn.dataset.id = c.id;
+  btn.innerHTML = `<span class="cefr-label">${c.id}</span><span class="cefr-desc">${c.desc}</span>`;
+  btn.onclick = () => {
+    btn.classList.toggle('selected');
+    valgteCEFR = Array.from(document.querySelectorAll('.cefr-btn.selected')).map(b => b.dataset.id);
+  };
+  cefrGrid.appendChild(btn);
+});
+
+function setLoadingStep(txt, pct) {
+  document.getElementById('loadingStep').textContent = txt;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function showState(state) {
+  ['idleState','loadingState','resultState'].forEach(id => {
+    const el = document.getElementById(id);
+    el.style.display = 'none';
+    el.classList.remove('visible');
+  });
+  const target = document.getElementById(state + 'State');
+  target.style.display = 'flex';
+  target.classList.add('visible');
+}
+
+async function generate() {
+  const apiKey = document.getElementById('apiKey').value.trim();
+  if (!apiKey) return showError('Lim inn Gemini API-nøkkel øverst i sidepanelet.');
+  if (!valgtTema) return showError('Velg et tema i listen til venstre.');
+  if (valgteCEFR.length === 0) return showError('Velg minst ett CEFR-nivå.');
+
+  document.getElementById('generateBtn').disabled = true;
+  document.getElementById('errorState').classList.remove('visible');
+  showState('loading');
+
+  try {
+    for (const nivå of valgteCEFR) {
+      await genererForNivå(apiKey, valgtTema, nivå);
+    }
+  } catch (e) {
+    showError('Feil: ' + e.message);
+    showState('idle');
+  } finally {
+    document.getElementById('generateBtn').disabled = false;
+  }
+}
+
+async function genererForNivå(apiKey, tema, nivå) {
+  setLoadingStep(`Sender forespørsel til Gemini (${nivå})…`, 10);
+
+  const prompt = byggPrompt(tema.navn, nivå);
+
+  const resp = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.7, maxOutputTokens: 8000 }
+      })
+    }
+  );
+
+  if (!resp.ok) {
+    const err = await resp.json();
+    throw new Error(err.error?.message || `HTTP ${resp.status}`);
+  }
+
+  setLoadingStep('Behandler innhold…', 50);
+  const data = await resp.json();
+  const tekst = data.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!tekst) throw new Error('Tom respons fra API.');
+
+  setLoadingStep('Bygger Word-dokument…', 75);
+  await lagDocx(tekst, tema.navn, nivå);
+  setLoadingStep('Ferdig!', 100);
+}
+
+function byggPrompt(temaNavnArg, nivå) {
+  const nivåInfo = {
+    A1: 'SVÆRT enkle setninger (maks 5–7 ord). Bruk bildestøtte-markører [BILDE: ...]. Alltid ordbank. Matching og avkrysning.',
+    A2: 'Korte setninger, enkle tekster (5–8 setninger). Fill-in-the-blank, sant/usant, enkle spørsmål.',
+    B1: 'Middels lange tekster (8–12 setninger). Skriveoppgaver, argumentasjon, mer åpne svar.',
+    B2: 'Lengre tekster (12–15 setninger), formelt/uformelt register. Analyse, diskusjon, sammensatte oppgaver.'
+  };
+  const gramFokus = {
+    A1: 'presens, subjekt+verb+objekt, tall, enkle setninger',
+    A2: 'V2-regelen, inversjon, preteritum, adjektivbøying',
+    B1: 'perfektum, modalverb, leddsetninger (fordi/når/hvis), sammensatte ord',
+    B2: 'passiv, kondisjonalis, avansert setningsbygging, formelt register'
+  };
+
+  return `Du er en erfaren norsklærer ved Molde voksenopplæringssenter (MBO). Du lager ukesoppgaver for voksne innvandrere på CEFR-nivå ${nivå}.
+
+TEMA FOR UKEN: ${temaNavnArg}
+CEFR-NIVÅ: ${nivå} – ${nivåInfo[nivå]}
+GRAMMATIKKFOKUS: ${gramFokus[nivå]}
+NORSKNORM: Bokmål
+
+LAG ET KOMPLETT UKESARK med følgende struktur. Følg nøyaktig dette formatet:
+
+═══════════════════════════════════════════════════════════
+TOPPTEKST
+Molde voksenopplæringssenter – MBO
+Tema: ${temaNavnArg}   |   Nivå: ${nivå}
+Navn: ________________________________   Dato: ____________
+═══════════════════════════════════════════════════════════
+
+LÆRINGSMÅL
+Etter denne uken kan jeg:
+• [mål 1]
+• [mål 2]
+• [mål 3]
+
+UKES-ORDLISTE
+[Lag en tabell med 12 nøkkelord fra temaet: Ord | Forklaring på enkel norsk | Mine notater]
+
+════════════════════════
+MANDAG
+════════════════════════
+
+📖 LESETEKST 1: [Tittel]
+[Lesetekst tilpasset nivå ${nivå}. For A1: 3–4 setninger. For A2: 5–7 setninger. For B1: 8–10 setninger. For B2: 10–14 setninger.]
+
+📖 LESETEKST 2: [Tittel]
+[Ny lesetekst om et annet aspekt av temaet, samme lengde og nivå.]
+
+Oppgave 1 – Leseforståelse (Lesetekst 1 og 2)
+a) [Oppgave]
+b) [Oppgave]
+c) [Oppgave]
+d) [Oppgave]
+e) [Oppgave]
+
+Oppgave 2 – Grammatikk: [Grammatikktema]
+a) [Oppgave]
+b) [Oppgave]
+c) [Oppgave]
+d) [Oppgave]
+e) [Oppgave]
+
+Oppgave 3 – Ord og ordforråd
+a) [Oppgave]
+b) [Oppgave]
+c) [Oppgave]
+d) [Oppgave]
+e) [Oppgave]
+
+🗣️ MUNTLIG ØVELSE (mandag)
+[Parmøvelse eller rollespill knyttet til dagens tema og tekster. 2–3 spørsmål/punkter.]
+
+════════════════════════
+TIRSDAG
+════════════════════════
+
+📖 LESETEKST 3: [Tittel]
+[Ny lesetekst – annet aspekt av temaet, nivå ${nivå}]
+
+📖 LESETEKST 4: [Tittel]
+[Ny lesetekst – dialog eller situasjon fra arbeidsdag i kantine]
+
+Oppgave 4 – Leseforståelse (Lesetekst 3 og 4)
+a) [Oppgave]
+b) [Oppgave]
+c) [Oppgave]
+d) [Oppgave]
+e) [Oppgave]
+
+Oppgave 5 – Grammatikk: [Grammatikktema]
+a) [Oppgave]
+b) [Oppgave]
+c) [Oppgave]
+d) [Oppgave]
+e) [Oppgave]
+
+Oppgave 6 – Ord og ordforråd
+a) [Oppgave]
+b) [Oppgave]
+c) [Oppgave]
+d) [Oppgave]
+e) [Oppgave]
+
+🗣️ MUNTLIG ØVELSE (tirsdag)
+[Rollespill – to roller, konkret situasjon i kantine]
+
+════════════════════════
+ONSDAG
+════════════════════════
+
+📖 LESETEKST 5: [Tittel]
+[Instruksjon, skjema eller regeldokument fra kantine – nivå ${nivå}]
+
+📖 LESETEKST 6: [Tittel]
+[Tekst om en situasjon eller et problem i kantine – nivå ${nivå}]
+
+Oppgave 7 – Leseforståelse (Lesetekst 5 og 6)
+a) [Oppgave]
+b) [Oppgave]
+c) [Oppgave]
+d) [Oppgave]
+e) [Oppgave]
+
+Oppgave 8 – Grammatikk: [Grammatikktema]
+a) [Oppgave]
+b) [Oppgave]
+c) [Oppgave]
+d) [Oppgave]
+e) [Oppgave]
+
+Oppgave 9 – Setningsbygging og uttrykksmåter
+a) [Oppgave]
+b) [Oppgave]
+c) [Oppgave]
+d) [Oppgave]
+e) [Oppgave]
+
+🗣️ MUNTLIG ØVELSE (onsdag)
+[Gruppeoppgave eller diskusjon om temaet]
+
+════════════════════════
+TORSDAG
+════════════════════════
+
+📖 LESETEKST 7: [Tittel]
+[Tekst om regler, retningslinjer eller rutiner – nivå ${nivå}]
+
+📖 LESETEKST 8: [Tittel]
+[Tekst fra gjestens/kundens perspektiv – nivå ${nivå}]
+
+Oppgave 10 – Leseforståelse (Lesetekst 7 og 8)
+a) [Oppgave]
+b) [Oppgave]
+c) [Oppgave]
+d) [Oppgave]
+e) [Oppgave]
+
+Oppgave 11 – Grammatikk: [Grammatikktema]
+a) [Oppgave]
+b) [Oppgave]
+c) [Oppgave]
+d) [Oppgave]
+e) [Oppgave]
+
+Oppgave 12 – Ord og setninger fra uken
+a) [Oppgave]
+b) [Oppgave]
+c) [Oppgave]
+d) [Oppgave]
+e) [Oppgave]
+
+🗣️ MUNTLIG ØVELSE (torsdag)
+[«Find Someone Who»-aktivitet eller parmøvelse med spørsmål fra temaet]
+
+════════════════════════
+FREDAG
+════════════════════════
+
+📖 LESETEKST 9: [Tittel]
+[Oppsummeringstekst om temaet – litt lengre enn tidligere dager – nivå ${nivå}]
+
+📖 LESETEKST 10: [Tittel]
+[Refleksjonstekst – elevens rolle og fremtid i yrket – nivå ${nivå}]
+
+Oppgave 13 – Leseforståelse (Lesetekst 9 og 10)
+a) [Oppgave]
+b) [Oppgave]
+c) [Oppgave]
+d) [Oppgave]
+e) [Oppgave]
+
+Oppgave 14 – Grammatikk: Frioppgave og ukesgjenntakelse
+a) [Oppgave]
+b) [Oppgave]
+c) [Oppgave]
+d) [Oppgave]
+e) [Oppgave]
+
+Oppgave 15 – Skriveoppgave
+a) [Tilpasset skriveoppgave. A1: skriv 2–3 setninger. A2: skriv et avsnitt. B1: skriv en tekst på 8–10 setninger. B2: skriv en argumenterende tekst.]
+b) [Alternativ vinkling]
+c) [Egenvurdering: Hva har du lært denne uken?]
+d) [Ordene jeg vil huske]
+e) [Spørsmål jeg fortsatt lurer på]
+
+🗣️ MUNTLIG ØVELSE (fredag)
+[Presentasjonsøvelse: fortell klassen om noe du har lært denne uken]
+
+═══════════════════════════════════════════════════════════
+FASIT
+═══════════════════════════════════════════════════════════
+
+[Gi fasit for alle lukkede oppgaver (1–14). For åpne oppgaver: gi eksempelsvar eller vurderingskriterier. Organiser etter oppgavenummer.]
+
+Oppgave 1:
+a) [svar]  b) [svar]  c) [svar]  d) [svar]  e) [svar]
+
+[fortsett for alle oppgaver...]
+
+─────────────────────────────────────────────────────────
+
+VIKTIGE KRAV:
+- All tekst på korrekt bokmål
+- Alle oppgaver starter på ny linje
+- Enkelt linjeskift mellom a–e
+- Dobbelt linjeskift mellom nummererte oppgaver (1, 2, 3...)
+- Lesetekstene skal være autentisk og relevant for kantineyrket
+- Grammatikk og ordforråd skal alltid knyttes til lesetekstene
+- Nivå ${nivå}: ${nivåInfo[nivå]}
+`;
+}
+
+async function lagDocx(innhold, temaNavnArg, nivå) {
+  setLoadingStep('Bygger Word-dokument (.docx)…', 85);
+
+  const filnavn = temaNavnArg.toLowerCase()
+    .replace(/\s+/g,'_')
+    .replace(/æ/g,'ae').replace(/ø/g,'oe').replace(/å/g,'aa')
+    .replace(/[^a-z0-9_]/g,'')
+    + '_' + nivå + '.docx';
+
+  // Parse content into lines
+  const linjer = innhold.split('\n');
+
+  // Build OOXML
+  const bodyXml = buildBodyXml(linjer, temaNavnArg, nivå);
+  const docx = buildDocxZip(bodyXml);
+
+  const blob = new Blob([docx], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+  const url = URL.createObjectURL(blob);
+
+  document.getElementById('dlName').textContent = filnavn;
+  document.getElementById('downloadBtn').href = url;
+  document.getElementById('downloadBtn').download = filnavn;
+  document.getElementById('resultTitle').textContent = `Ukesark klart – ${temaNavnArg} (${nivå})`;
+  document.getElementById('resultDesc').textContent = `${filnavn} · Word-dokument klar til nedlasting`;
+
+  const preview = innhold.substring(0, 1000) + '\n\n[…fortsetter i Word-filen…]';
+  document.getElementById('previewBox').textContent = preview;
+  document.getElementById('outputBadge').textContent = '✓ Generert';
+
+  showState('result');
+}
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+function buildBodyXml(linjer, tema, nivå) {
+  const NAVY = '1F4E79';
+  const TEAL = '1a7a6e';
+  const AMBER = 'e8a030';
+  const LIGHTBLUE = 'D6E4F0';
+  const LIGHTGREEN = 'EAF4EA';
+  const LIGHTYELLOW = 'FFF3CD';
+  const LIGHTGRAY = 'F5F5F5';
+
+  let body = '';
+
+  // TOPPTEKST (shaded header table)
+  body += `
+<w:tbl>
+  <w:tblPr>
+    <w:tblW w:w="9360" w:type="dxa"/>
+    <w:tblBorders>
+      <w:top w:val="single" w:sz="4" w:color="${NAVY}"/>
+      <w:bottom w:val="single" w:sz="4" w:color="${NAVY}"/>
+      <w:left w:val="single" w:sz="4" w:color="${NAVY}"/>
+      <w:right w:val="single" w:sz="4" w:color="${NAVY}"/>
+    </w:tblBorders>
+    <w:shd w:val="clear" w:fill="${NAVY}" w:color="auto"/>
+  </w:tblPr>
+  <w:tr>
+    <w:tc>
+      <w:tcPr>
+        <w:tcW w:w="9360" w:type="dxa"/>
+        <w:shd w:val="clear" w:fill="${NAVY}" w:color="auto"/>
+        <w:tcMar>
+          <w:top w:w="120" w:type="dxa"/>
+          <w:bottom w:w="120" w:type="dxa"/>
+          <w:left w:w="180" w:type="dxa"/>
+          <w:right w:w="180" w:type="dxa"/>
+        </w:tcMar>
+      </w:tcPr>
+      <w:p>
+        <w:pPr><w:jc w:val="left"/></w:pPr>
+        <w:r><w:rPr><w:b/><w:color w:val="FFFFFF"/><w:sz w:val="28"/><w:szCs w:val="28"/><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/></w:rPr>
+          <w:t>Molde voksenopplæringssenter – MBO</w:t></w:r>
+      </w:p>
+      <w:p>
+        <w:pPr><w:jc w:val="left"/></w:pPr>
+        <w:r><w:rPr><w:b/><w:color w:val="FFFFFF"/><w:sz w:val="24"/><w:szCs w:val="24"/><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/></w:rPr>
+          <w:t>Kantinemedarbeider  |  Tema: ${esc(tema)}  |  Nivå: ${esc(nivå)}</w:t></w:r>
+      </w:p>
+      <w:p>
+        <w:r><w:rPr><w:color w:val="CCDDEE"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/></w:rPr>
+          <w:t xml:space="preserve">Navn: ________________________________   Dato: ____________   Uke: ________</w:t></w:r>
+      </w:p>
+    </w:tc>
+  </w:tr>
+</w:tbl>
+<w:p><w:pPr><w:spacing w:after="80"/></w:pPr></w:p>`;
+
+  // Process lines
+  let inFasit = false;
+  let prevWasEmpty = false;
+
+  for (let i = 0; i < linjer.length; i++) {
+    const linje = linjer[i];
+    const trimmed = linje.trim();
+
+    // Skip topptekst block already rendered
+    if (trimmed.startsWith('═══') || trimmed.startsWith('Molde voksenopplæring') ||
+        trimmed.startsWith('Tema:') || trimmed.startsWith('Navn:') ||
+        trimmed.startsWith('TOPPTEKST')) continue;
+
+    // Empty line
+    if (!trimmed) {
+      if (!prevWasEmpty) {
+        body += `<w:p><w:pPr><w:spacing w:after="60"/></w:pPr></w:p>`;
+      }
+      prevWasEmpty = true;
+      continue;
+    }
+    prevWasEmpty = false;
+
+    // FASIT section
+    if (trimmed === 'FASIT' || trimmed.startsWith('═══') && inFasit) {
+      inFasit = true;
+    }
+    if (trimmed.startsWith('═══')) {
+      body += `<w:p><w:pPr><w:pBdr><w:top w:val="single" w:sz="6" w:color="${NAVY}" w:space="4"/></w:pBdr><w:spacing w:before="160" w:after="80"/></w:pPr></w:p>`;
+      continue;
+    }
+    if (trimmed.startsWith('────')) {
+      body += `<w:p><w:pPr><w:pBdr><w:bottom w:val="single" w:sz="4" w:color="CCCCCC" w:space="4"/></w:pBdr></w:pPr></w:p>`;
+      continue;
+    }
+
+    // FASIT heading
+    if (trimmed === 'FASIT') {
+      inFasit = true;
+      body += shaded(`📋 FASIT`, LIGHTGRAY, NAVY, 26, true);
+      continue;
+    }
+
+    // Day headers (MANDAG, TIRSDAG etc.)
+    const dagNavn = ['MANDAG','TIRSDAG','ONSDAG','TORSDAG','FREDAG'];
+    if (dagNavn.includes(trimmed)) {
+      body += dayHeader(trimmed, NAVY);
+      continue;
+    }
+
+    // LÆRINGSMÅL
+    if (trimmed === 'LÆRINGSMÅL' || trimmed === 'UKES-ORDLISTE') {
+      const farge = trimmed === 'LÆRINGSMÅL' ? LIGHTBLUE : LIGHTGREEN;
+      body += shaded(`📌 ${trimmed}`, farge, NAVY, 24, true);
+      continue;
+    }
+
+    // Muntlig øvelse
+    if (trimmed.startsWith('🗣️ MUNTLIG') || trimmed.startsWith('🗣 MUNTLIG')) {
+      body += shaded(trimmed, LIGHTYELLOW, '7a5c00', 22, true);
+      continue;
+    }
+
+    // Lesetekst headers
+    if (trimmed.startsWith('📖 LESETEKST')) {
+      body += textPara(trimmed, { bold: true, size: 22, color: TEAL, spaceBefore: 160, spaceAfter: 60 });
+      continue;
+    }
+
+    // Oppgave headings  (Oppgave 1 –, Oppgave 2 – ...)
+    if (/^Oppgave\s+\d+/.test(trimmed)) {
+      body += textPara(trimmed, { bold: true, size: 22, color: NAVY, spaceBefore: 200, spaceAfter: 80 });
+      continue;
+    }
+
+    // sub-items a) b) c) d) e)
+    if (/^[a-e]\)/.test(trimmed)) {
+      body += textPara(trimmed, { size: 22, indent: 360, spaceBefore: 60, spaceAfter: 60 });
+      continue;
+    }
+
+    // Bullet points
+    if (trimmed.startsWith('•') || trimmed.startsWith('-')) {
+      body += textPara(trimmed, { size: 22, indent: 360, spaceBefore: 40, spaceAfter: 40 });
+      continue;
+    }
+
+    // Default paragraph
+    const isFasitLine = inFasit;
+    body += textPara(trimmed, {
+      size: 22,
+      spaceBefore: isFasitLine ? 40 : 80,
+      spaceAfter: isFasitLine ? 40 : 80,
+      color: isFasitLine ? '444444' : '1c1c1c'
+    });
+  }
+
+  return body;
+}
+
+function textPara(text, opts = {}) {
+  const { bold=false, size=22, color='1c1c1c', indent=0, spaceBefore=80, spaceAfter=80 } = opts;
+  const indentXml = indent ? `<w:ind w:left="${indent}"/>` : '';
+  const boldXml = bold ? '<w:b/>' : '';
+  return `<w:p>
+  <w:pPr>
+    <w:spacing w:before="${spaceBefore}" w:after="${spaceAfter}"/>
+    ${indentXml}
+  </w:pPr>
+  <w:r>
+    <w:rPr>${boldXml}<w:color w:val="${color}"/><w:sz w:val="${size}"/><w:szCs w:val="${size}"/><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/></w:rPr>
+    <w:t xml:space="preserve">${esc(text)}</w:t>
+  </w:r>
+</w:p>`;
+}
+
+function shaded(text, fill, textColor, size=24, bold=false) {
+  const boldXml = bold ? '<w:b/>' : '';
+  return `<w:p>
+  <w:pPr>
+    <w:shd w:val="clear" w:fill="${fill}" w:color="auto"/>
+    <w:spacing w:before="100" w:after="100"/>
+    <w:ind w:left="120" w:right="120"/>
+  </w:pPr>
+  <w:r>
+    <w:rPr>${boldXml}<w:color w:val="${textColor}"/><w:sz w:val="${size}"/><w:szCs w:val="${size}"/>
+      <w:rFonts w:ascii="Arial" w:hAnsi="Arial"/></w:rPr>
+    <w:t xml:space="preserve">${esc(text)}</w:t>
+  </w:r>
+</w:p>`;
+}
+
+function dayHeader(dag, navy) {
+  const emojis = {MANDAG:'🟦',TIRSDAG:'🟩',ONSDAG:'🟨',TORSDAG:'🟧',FREDAG:'🟥'};
+  const e = emojis[dag] || '📅';
+  return `
+<w:p><w:pPr><w:spacing w:before="240" w:after="0"/></w:pPr></w:p>
+<w:p>
+  <w:pPr>
+    <w:shd w:val="clear" w:fill="${navy}" w:color="auto"/>
+    <w:spacing w:before="120" w:after="120"/>
+    <w:ind w:left="120"/>
+  </w:pPr>
+  <w:r>
+    <w:rPr><w:b/><w:color w:val="FFFFFF"/><w:sz w:val="28"/><w:szCs w:val="28"/>
+      <w:rFonts w:ascii="Arial" w:hAnsi="Arial"/></w:rPr>
+    <w:t xml:space="preserve">${e} ${dag}</w:t>
+  </w:r>
+</w:p>
+<w:p><w:pPr><w:spacing w:before="60" w:after="0"/></w:pPr></w:p>`;
+}
+
+// Build minimal valid .docx (ZIP) in memory
+function buildDocxZip(bodyXml) {
+  const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+  xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math"
+  xmlns:v="urn:schemas-microsoft-com:vml"
+  xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing"
+  xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
+  xmlns:w10="urn:schemas-microsoft-com:office:word"
+  xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+  xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"
+  xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup"
+  xmlns:wpi="http://schemas.microsoft.com/office/word/2010/wordprocessingInk"
+  xmlns:wne="http://schemas.microsoft.com/office/word/2006/wordml"
+  xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape"
+  mc:Ignorable="w14 wp14">
+<w:body>
+<w:sectPr>
+  <w:pgSz w:w="11906" w:h="16838"/>
+  <w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="708" w:footer="708" w:gutter="0"/>
+</w:sectPr>
+${bodyXml}
+</w:body>
+</w:document>`;
+
+  const relsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
+</Relationships>`;
+
+  const stylesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:docDefaults>
+    <w:rPrDefault><w:rPr>
+      <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>
+      <w:sz w:val="22"/><w:szCs w:val="22"/>
+    </w:rPr></w:rPrDefault>
+  </w:docDefaults>
+</w:styles>`;
+
+  const contentTypes = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+  <Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
+</Types>`;
+
+  const rootRels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>`;
+
+  // Build ZIP manually using a simple implementation
+  const files = {
+    '[Content_Types].xml': contentTypes,
+    '_rels/.rels': rootRels,
+    'word/document.xml': documentXml,
+    'word/styles.xml': stylesXml,
+    'word/_rels/document.xml.rels': relsXml,
+  };
+
+  return createZip(files);
+}
+
+// Minimal ZIP creator
+function createZip(files) {
+  const parts = [];
+  const centralDir = [];
+  let offset = 0;
+
+  for (const [name, content] of Object.entries(files)) {
+    const nameBytes = strToBytes(name);
+    const dataBytes = strToBytes(content);
+    const crc = crc32(dataBytes);
+    const localHeader = makeLocalHeader(nameBytes, dataBytes.length, crc);
+    centralDir.push({ nameBytes, dataBytes, crc, offset, size: dataBytes.length });
+    parts.push(localHeader, dataBytes);
+    offset += localHeader.length + dataBytes.length;
+  }
+
+  const cdParts = [];
+  let cdSize = 0;
+  for (const f of centralDir) {
+    const cd = makeCentralDir(f.nameBytes, f.dataBytes.length, f.crc, f.offset);
+    cdParts.push(cd);
+    cdSize += cd.length;
+  }
+
+  const eocd = makeEOCD(centralDir.length, cdSize, offset);
+  return concat([...parts, ...cdParts, eocd]);
+}
+
+function strToBytes(s) {
+  const enc = new TextEncoder();
+  return enc.encode(s);
+}
+
+function concat(arrays) {
+  let total = 0;
+  for (const a of arrays) total += a.length;
+  const out = new Uint8Array(total);
+  let pos = 0;
+  for (const a of arrays) { out.set(a, pos); pos += a.length; }
+  return out;
+}
+
+function u16le(n) { return new Uint8Array([n & 0xff, (n >> 8) & 0xff]); }
+function u32le(n) { return new Uint8Array([n & 0xff, (n>>8)&0xff, (n>>16)&0xff, (n>>24)&0xff]); }
+
+function makeLocalHeader(name, size, crc) {
+  return concat([
+    new Uint8Array([0x50,0x4b,0x03,0x04]), // sig
+    u16le(20), u16le(0), u16le(0),          // version, flags, compression (stored)
+    u16le(0), u16le(0),                      // mod time, mod date
+    u32le(crc), u32le(size), u32le(size),   // crc, compressed, uncompressed
+    u16le(name.length), u16le(0),            // name len, extra len
+    name
+  ]);
+}
+
+function makeCentralDir(name, size, crc, offset) {
+  return concat([
+    new Uint8Array([0x50,0x4b,0x01,0x02]),
+    u16le(20), u16le(20), u16le(0), u16le(0),
+    u16le(0), u16le(0),
+    u32le(crc), u32le(size), u32le(size),
+    u16le(name.length), u16le(0), u16le(0),
+    u16le(0), u16le(0), u32le(0),
+    u32le(offset),
+    name
+  ]);
+}
+
+function makeEOCD(count, cdSize, cdOffset) {
+  return concat([
+    new Uint8Array([0x50,0x4b,0x05,0x06]),
+    u16le(0), u16le(0),
+    u16le(count), u16le(count),
+    u32le(cdSize), u32le(cdOffset),
+    u16le(0)
+  ]);
+}
+
+function crc32(data) {
+  let crc = 0xFFFFFFFF;
+  for (let i = 0; i < data.length; i++) {
+    crc ^= data[i];
+    for (let j = 0; j < 8; j++) crc = (crc >>> 1) ^ (crc & 1 ? 0xEDB88320 : 0);
+  }
+  return (crc ^ 0xFFFFFFFF) >>> 0;
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorState');
+  el.textContent = '⚠️ ' + msg;
+  el.classList.add('visible');
+  document.getElementById('generateBtn').disabled = false;
+  showState('idle');
+  setTimeout(() => el.classList.remove('visible'), 6000);
+}
+</script>
+</body>
+</html>
