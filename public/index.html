@@ -1057,25 +1057,52 @@ function utforNedlasting() {
 }
 
 async function lagDocx(innhold, temaNavnArg, nivå) {
-  // ── Parse ORDLISTE-linjer fra API-svaret ─────────────
+  // Parse ordliste fra AI-svaret
   const ordlisteLinjer = innhold.split('\n')
     .filter(l => l.trim().startsWith('ORDLISTE:'));
   const ord = [];
   for (const l of ordlisteLinjer) {
-    // Format: ORDLISTE:1. norsk ord – forklaring
     const m = l.match(/ORDLISTE:\d+\.?\s*(.+)/);
     if (m) ord.push(m[1].trim());
   }
 
-  // Bygg kropp med faktiske ord i tabellen
-  const linjer = innhold.split('\n');
-  let bodyXml = byggBodyXml(linjer, temaNavnArg, nivå);
+  // Send til backend som lager .docx
+  const res = await fetch('/api/lag-docx', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      passord: passordSession,
+      innhold,
+      temaNavn: temaNavnArg,
+      nivå,
+      ord
+    })
+  });
 
-  // Erstatt ORD_N_PLACEHOLDER med faktiske ord fra AI
-  for (let i = 1; i <= 10; i++) {
-    const ordTekst = ord[i-1] || '';
-    bodyXml = bodyXml.replace(`ORD_${i}_PLACEHOLDER`, ordTekst.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'));
+  if (res.status === 401) { loggUt(); throw new Error('Sesjonen er utløpt.'); }
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.feil || 'Feil ved generering av Word-dokument.');
   }
+
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+
+  const filnavn = temaNavnArg.toLowerCase()
+    .replace(/\s+/g,'_').replace(/æ/g,'ae').replace(/ø/g,'oe').replace(/å/g,'aa')
+    .replace(/[^a-z0-9_]/g,'') + '_' + nivå + '.docx';
+
+  nedlastingData = { url, filnavn };
+  document.getElementById('dlNavn').textContent = filnavn;
+  document.getElementById('dlBtn').disabled = false;
+  document.getElementById('resultTitle').textContent = `${temaNavnArg} (${nivå}) – klar!`;
+  document.getElementById('resultDesc').textContent = `${filnavn} · Word-dokument`;
+  document.getElementById('previewBox').textContent = innhold.substring(0,900) + '\n\n[… fortsetter i Word-filen …]';
+  document.getElementById('outputBadge').textContent = '✓ Generert';
+  visState('result');
+}
+
+// ── DUMMY: Ikke lenger brukt – docx lages på server ──
   const docxBytes = byggDocxZip(bodyXml);
   const blob = new Blob([docxBytes], { type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
   const url = URL.createObjectURL(blob);
@@ -1398,7 +1425,6 @@ function ordlisteTabell(headerFyll, headerTekst) {
     xml += `
 <w:tr>
   <w:trPr><w:trHeight w:val="560" w:hRule="atLeast"/></w:trPr>
-  <!-- Nr-celle -->
   <w:tc>
     <w:tcPr>
       <w:tcW w:w="600" w:type="dxa"/>
@@ -1420,7 +1446,6 @@ function ordlisteTabell(headerFyll, headerTekst) {
       </w:rPr><w:t>${nr}</w:t></w:r>
     </w:p>
   </w:tc>
-  <!-- Norsk ord-celle (fylles inn av AI via prompt) -->
   <w:tc>
     <w:tcPr>
       <w:tcW w:w="4226" w:type="dxa"/>
@@ -1442,7 +1467,6 @@ function ordlisteTabell(headerFyll, headerTekst) {
       </w:rPr><w:t xml:space="preserve">ORD_${nr}_PLACEHOLDER</w:t></w:r>
     </w:p>
   </w:tc>
-  <!-- Oversettelse-celle (blank – eleven fyller inn) -->
   <w:tc>
     <w:tcPr>
       <w:tcW w:w="4200" w:type="dxa"/>
@@ -1516,7 +1540,7 @@ function byggWordTabell(linjer, headerFyll, headerTekst) {
     <w:insideH w:val="single" w:sz="4" w:color="D8E8F0"/>
     <w:insideV w:val="none"/>
   </w:tblBorders>
-  <w:tblLook w:val="04A0"/>
+  <w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1"/>
 </w:tblPr>
 <w:tblGrid>
 ${kolBredder.map(b=>`  <w:gridCol w:w="${b}"/>`).join('\n')}
