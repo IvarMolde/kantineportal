@@ -264,39 +264,92 @@ header {
 .progress-bar { width:260px; height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
 .progress-fill { height:100%; background:var(--teal); border-radius:2px; transition:width .5s ease; width:0%; }
 
-.result-state { display:none; flex-direction:column; gap:14px; }
+.result-state { display:none; flex-direction:column; gap:18px; }
 .result-state.vis { display:flex; }
+
+/* ── Suksess-banner ── */
 .result-info {
   background:linear-gradient(135deg,#e8f7f5,#d4f0eb);
-  border:1px solid #a7ddd7; border-radius:10px;
-  padding:14px 18px; display:flex; align-items:center; gap:14px;
+  border:1px solid #a7ddd7; border-radius:12px;
+  padding:16px 20px; display:flex; align-items:center; gap:14px;
 }
-.result-check { width:38px; height:38px; flex-shrink:0; background:var(--teal); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:16px; }
-.result-info h4 { font-size:.92rem; font-weight:600; color:var(--teal); }
-.result-info p { font-size:.77rem; color:#4a8e88; margin-top:2px; }
+.result-check {
+  width:40px; height:40px; flex-shrink:0;
+  background:var(--teal); border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size:18px;
+}
+.result-info h4 { font-size:.95rem; font-weight:600; color:var(--teal); }
+.result-info p { font-size:.78rem; color:#4a8e88; margin-top:2px; }
 
+/* ── STOR NEDLASTINGSKNAPP ── */
+@keyframes nedlastPuls {
+  0%,100% { box-shadow: 0 6px 24px rgba(26,122,110,.45); }
+  50%      { box-shadow: 0 10px 36px rgba(26,122,110,.75); }
+}
 .dl-btn {
-  display:flex; align-items:center; gap:11px;
-  padding:13px 18px;
-  background:var(--navy); color:#fff;
-  border:none; border-radius:9px;
+  display:flex; align-items:center; gap:18px;
+  padding:22px 28px;
+  background:linear-gradient(135deg, var(--teal) 0%, #1a9a8a 100%);
+  color:#fff;
+  border:none; border-radius:16px;
   cursor:pointer; font-family:'DM Sans',sans-serif;
-  font-size:.86rem; font-weight:500;
-  text-decoration:none; transition:background .18s;
+  text-decoration:none;
+  transition:all .22s ease;
+  animation: nedlastPuls 2.2s ease-in-out infinite;
+  position:relative; overflow:hidden;
 }
-.dl-btn:hover { background:var(--navy-mid); }
-.dl-icon { font-size:17px; }
-.dl-info { text-align:left; }
-.dl-name { font-weight:600; }
-.dl-size { font-size:.72rem; opacity:.6; }
+.dl-btn::before {
+  content:'';
+  position:absolute; top:0; left:-100%;
+  width:60%; height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);
+  animation: shine 2.8s ease-in-out infinite;
+}
+@keyframes shine {
+  0%   { left:-100%; }
+  50%,100% { left:160%; }
+}
+.dl-btn:hover {
+  background:linear-gradient(135deg, #1a9a8a 0%, #20b89f 100%);
+  transform:translateY(-3px);
+  box-shadow:0 14px 40px rgba(26,122,110,.55);
+  animation:none;
+}
+.dl-btn:active { transform:translateY(-1px); }
+.dl-icon-wrap {
+  width:52px; height:52px; flex-shrink:0;
+  background:rgba(255,255,255,.18);
+  border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:26px;
+}
+.dl-info { text-align:left; flex:1; }
+.dl-tittel {
+  font-family:'DM Serif Display',serif;
+  font-size:1.15rem; font-weight:400;
+  display:block; margin-bottom:3px;
+}
+.dl-name { font-size:.82rem; opacity:.8; display:block; font-weight:400; }
+.dl-pil {
+  font-size:1.4rem; opacity:.7; flex-shrink:0;
+  transition:transform .2s;
+}
+.dl-btn:hover .dl-pil { transform:translateX(4px); opacity:1; }
 
+/* ── Forhåndsvisning (liten og diskret) ── */
 .preview-box {
   background:var(--cream); border:1px solid var(--border);
-  border-radius:9px; padding:18px;
-  font-size:.78rem; line-height:1.8; color:var(--text);
-  max-height:300px; overflow-y:auto;
+  border-radius:9px; padding:14px 18px;
+  font-size:.74rem; line-height:1.75; color:#888;
+  max-height:180px; overflow-y:auto;
   font-family:'DM Mono','Courier New',monospace;
   white-space:pre-wrap;
+}
+.preview-label {
+  font-size:.7rem; font-weight:600; color:var(--muted);
+  text-transform:uppercase; letter-spacing:.05em;
+  margin-bottom:6px; display:block;
 }
 
 .error-box {
@@ -467,13 +520,17 @@ header {
               </div>
             </div>
             <a href="#" class="dl-btn" id="dlBtn" download>
-              <span class="dl-icon">📥</span>
+              <div class="dl-icon-wrap">📥</div>
               <div class="dl-info">
-                <div class="dl-name" id="dlNavn">kantinemedarbeider.docx</div>
-                <div class="dl-size">Word-dokument · .docx</div>
+                <span class="dl-tittel">Last ned arbeidsark</span>
+                <span class="dl-name" id="dlNavn">kantinemedarbeider.docx</span>
               </div>
+              <span class="dl-pil">→</span>
             </a>
-            <div class="preview-box" id="previewBox"></div>
+            <div>
+              <span class="preview-label">Forhåndsvisning av innhold</span>
+              <div class="preview-box" id="previewBox"></div>
+            </div>
           </div>
           <div class="error-box" id="errorBox"></div>
         </div>
