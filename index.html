@@ -1121,32 +1121,45 @@ function byggBodyXml(linjer) {
   let aktivDagFarge = NAVY;
   let aktivDagLys = 'EBF3FB';
 
-  for (const linje of linjer) {
-    const t = linje.trim();
+  // ── Samle linjer i grupper – markdown-tabeller behandles samlet ──
+  let i = 0;
+  while (i < linjer.length) {
+    const t = linjer[i].trim();
 
     // Skip header lines
     if (!t || t.startsWith('Molde voksen') || t.startsWith('Navn:') ||
         t.startsWith('TOPPTEKST') || t === 'Tema:' || t.startsWith('Tema: ') ||
         t.startsWith('═══') || t.startsWith('════')) {
       if (!t) {
-        if (!prevBlank) body += `<w:p><w:pPr><w:spacing w:after=80/></w:pPr></w:p>`;
+        if (!prevBlank) body += `<w:p><w:pPr><w:spacing w:after="80"/></w:pPr></w:p>`;
         prevBlank = true;
       } else prevBlank = false;
-      continue;
+      i++; continue;
     }
     prevBlank = false;
 
+    // ── MARKDOWN-TABELL: samle alle |...|  linjer i én blokk ──────
+    if (t.startsWith('|')) {
+      const tblLinjer = [];
+      while (i < linjer.length && linjer[i].trim().startsWith('|')) {
+        tblLinjer.push(linjer[i].trim());
+        i++;
+      }
+      body += byggWordTabell(tblLinjer, LGREEN, TEAL);
+      continue;
+    }
+
     // Horisontale linjer
-    if (t.startsWith('───')) { body += skille('D0D0D0'); continue; }
+    if (t.startsWith('───')) { body += skille('D0D0D0'); i++; continue; }
 
     // FASIT
     if (t === 'FASIT') {
       inFasit = true;
-      body += `<w:p><w:pPr><w:spacing w:before=400 w:after=0/><w:pBdr>
-        <w:top w:val=single w:sz=12 w:color=${NAVY} w:space=4/>
+      body += `<w:p><w:pPr><w:spacing w:before="400" w:after="0"/><w:pBdr>
+        <w:top w:val="single" w:sz="12" w:color="${NAVY}" w:space="4"/>
       </w:pBdr></w:pPr></w:p>`;
       body += boksOverskrift('📋 FASIT – SVAR', LGRAY, NAVY, 26);
-      continue;
+      i++; continue;
     }
 
     // Dagheadere
@@ -1154,56 +1167,195 @@ function byggBodyXml(linjer) {
       aktivDagFarge = dagFarge[t] || NAVY;
       aktivDagLys   = dagLysFarge[t] || 'EBF3FB';
       body += dagHeader(t, aktivDagFarge);
-      continue;
+      i++; continue;
     }
 
     // LÆRINGSMÅL
     if (t === 'LÆRINGSMÅL') {
       body += boksOverskrift('🎯 LÆRINGSMÅL', LBLUE, NAVY, 24);
-      continue;
+      i++; continue;
     }
 
     // UKES-ORDLISTE
     if (t === 'UKES-ORDLISTE') {
       body += boksOverskrift('📝 UKES-ORDLISTE', LGREEN, TEAL, 24);
-      continue;
+      i++; continue;
     }
 
     // Muntlig øvelse
     if (t.startsWith('🗣')) {
       body += muntligBoks(t, LYELLOW);
-      continue;
+      i++; continue;
     }
 
     // Lesetekst-overskrift
     if (t.startsWith('📖')) {
       body += lesetekstHeader(t, aktivDagFarge, aktivDagLys);
-      continue;
+      i++; continue;
     }
 
     // Oppgave-overskrift
     if (/^Oppgave\s+\d+/.test(t)) {
       body += oppgaveHeader(t, aktivDagFarge);
-      continue;
+      i++; continue;
     }
 
     // Sub-items a)–e)
     if (/^[a-e]\)/.test(t)) {
       const farge = inFasit ? '555555' : '222222';
       body += subItem(t, farge, inFasit);
-      continue;
+      i++; continue;
     }
 
     // Bullets
     if (t.startsWith('•') || (t.startsWith('-') && t.length > 2)) {
       body += bullet(t);
-      continue;
+      i++; continue;
     }
 
-    // Vanlig avsnitt (lesetekst-brødtekst eller annet)
+    // Vanlig avsnitt
     body += vanligAvsnitt(t, inFasit);
+    i++;
   }
   return body;
+}
+
+// ── MARKDOWN-TABELL → WORD-TABELL ────────────────────────
+function byggWordTabell(linjer, headerFyll, headerTekst) {
+  // Parse rader – filtrer bort separator-linjer (|:---|)
+  const rader = linjer
+    .filter(l => !l.replace(/[|\-: ]/g,'').length === 0)
+    .filter(l => !/^\|[\s|:\-]+\|$/.test(l));
+
+  if (rader.length === 0) return '';
+
+  // Parse kolonner fra første rad for å bestemme bredder
+  const parseRad = l => l.split('|')
+    .map(c => c.trim())
+    .filter((c, idx, arr) => idx > 0 && idx < arr.length - 1);
+
+  const kolAntall = parseRad(rader[0]).length;
+  if (kolAntall === 0) return '';
+
+  // Kolonnebredder (DXA) – totalt 9026
+  // For ordliste (3 kol): Ord(2200) | Forklaring(4200) | Notater(2626)
+  // For 2 kol: 3500 | 5526
+  // For 4+ kol: jevnt fordelt
+  let kolBredder;
+  if (kolAntall === 3) {
+    kolBredder = [2000, 4200, 2826];
+  } else if (kolAntall === 2) {
+    kolBredder = [3000, 6026];
+  } else {
+    const bredde = Math.floor(9026 / kolAntall);
+    kolBredder = Array(kolAntall).fill(bredde);
+    kolBredder[kolAntall-1] = 9026 - bredde*(kolAntall-1);
+  }
+
+  const totalBredde = kolBredder.reduce((a,b)=>a+b,0);
+
+  let xml = `<w:p><w:pPr><w:spacing w:before="160" w:after="0"/></w:pPr></w:p>
+<w:tbl>
+<w:tblPr>
+  <w:tblW w:w="${totalBredde}" w:type="dxa"/>
+  <w:tblBorders>
+    <w:top w:val="single" w:sz="4" w:color="B0C4DE" w:space="0"/>
+    <w:bottom w:val="single" w:sz="4" w:color="B0C4DE" w:space="0"/>
+    <w:left w:val="none"/>
+    <w:right w:val="none"/>
+    <w:insideH w:val="single" w:sz="4" w:color="D8E8F0"/>
+    <w:insideV w:val="none"/>
+  </w:tblBorders>
+  <w:tblLook w:val="04A0"/>
+</w:tblPr>
+<w:tblGrid>
+${kolBredder.map(b=>`  <w:gridCol w:w="${b}"/>`).join('\n')}
+</w:tblGrid>`;
+
+  rader.forEach((linje, radIdx) => {
+    const celler = parseRad(linje);
+    if (celler.length === 0) return;
+
+    const erHeader = radIdx === 0;
+    const radFyll  = erHeader ? headerFyll : (radIdx % 2 === 0 ? 'F8FCF9' : 'FFFFFF');
+
+    // Fjern markdown-bold (**tekst**)
+    const rens = t => t.replace(/\*\*([^*]+)\*\*/g, '$1').trim();
+
+    xml += `
+<w:tr>
+  <w:trPr><w:trHeight w:val="480" w:hRule="atLeast"/>${erHeader?'<w:tblHeader/>':''}</w:trPr>`;
+
+    kolBredder.forEach((bredde, kIdx) => {
+      const celleTekst = rens(celler[kIdx] || '');
+      const erNotatKol = kIdx === kolAntall - 1 && kolAntall >= 3;
+
+      // Notat-kolonne: blank linje for skriving
+      const visTekst = erNotatKol && !erHeader ? '' : celleTekst;
+
+      xml += `
+  <w:tc>
+    <w:tcPr>
+      <w:tcW w:w="${bredde}" w:type="dxa"/>
+      <w:shd w:val="clear" w:fill="${erNotatKol&&!erHeader?'FAFFF8':radFyll}" w:color="auto"/>
+      <w:tcMar>
+        <w:top w:w="100" w:type="dxa"/>
+        <w:bottom w:w="100" w:type="dxa"/>
+        <w:left w:w="160" w:type="dxa"/>
+        <w:right w:w="160" w:type="dxa"/>
+      </w:tcMar>
+    </w:tcPr>
+    <w:p>
+      <w:pPr><w:spacing w:after="0"/></w:pPr>
+      <w:r><w:rPr>
+        ${erHeader?`<w:b/><w:color w:val="${headerTekst}"/>`:`<w:color w:val="${erNotatKol?'AAAAAA':'333333'}"/>`}
+        <w:sz w:val="${erHeader?22:22}"/><w:szCs w:val="${erHeader?22:22}"/>
+        <w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/>
+      </w:rPr>
+      <w:t xml:space="preserve">${esc(visTekst)}</w:t></w:r>
+    </w:p>
+  </w:tc>`;
+    });
+
+    xml += `
+</w:tr>`;
+  });
+
+  // Legg til 2 ekstra tomme rader for skriving (notatkolonne)
+  if (kolAntall >= 2) {
+    for (let ekstra = 0; ekstra < 2; ekstra++) {
+      xml += `
+<w:tr>
+  <w:trPr><w:trHeight w:val="600" w:hRule="atLeast"/></w:trPr>`;
+      kolBredder.forEach((bredde, kIdx) => {
+        const erNotat = kIdx === kolAntall - 1;
+        xml += `
+  <w:tc>
+    <w:tcPr>
+      <w:tcW w:w="${bredde}" w:type="dxa"/>
+      <w:shd w:val="clear" w:fill="${erNotat?'FAFFF8':'FFFFFF'}" w:color="auto"/>
+      <w:tcMar>
+        <w:top w:w="100" w:type="dxa"/>
+        <w:bottom w:w="100" w:type="dxa"/>
+        <w:left w:w="160" w:type="dxa"/>
+        <w:right w:w="160" w:type="dxa"/>
+      </w:tcMar>
+    </w:tcPr>
+    <w:p><w:pPr><w:spacing w:after="0"/></w:pPr>
+      <w:r><w:rPr><w:sz w:val="22"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr>
+      <w:t></w:t></w:r>
+    </w:p>
+  </w:tc>`;
+      });
+      xml += `
+</w:tr>`;
+    }
+  }
+
+  xml += `
+</w:tbl>
+<w:p><w:pPr><w:spacing w:after="160"/></w:pPr></w:p>`;
+  return xml;
 }
 
 // ── HJELPEFUNKSJONER FOR WORD-DESIGN ────────────────────
